@@ -6,5 +6,6 @@ namespace GanadoresRetoEmpresarial
 {
     public class Habitacion
     {
+        //hola
     }
 }
