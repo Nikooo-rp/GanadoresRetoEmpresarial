@@ -8,5 +8,11 @@ namespace GanadoresRetoEmpresarial
     {
         public string nombre = string.Empty;
         protected string contraseña = string.Empty;
+
+        public string ConsultarDisponibilidad(Habitacion h) 
+        {
+            return h.getEstado();
+        }
+
     }
 }

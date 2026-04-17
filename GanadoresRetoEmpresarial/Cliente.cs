@@ -8,14 +8,19 @@ namespace GanadoresRetoEmpresarial
     {
         public string correo = string.Empty;
         
-        public void CrearReserva()
+        public Reserva CrearReserva(Habitacion h)
         {
-
+            Reserva r = new Reserva();
+            // Lógica.
+            return r;
         }
-        public void ConsultarReserva()
+        public string ConsultarReserva(Habitacion h)
         {
+            string rta = string.Empty;
+            // Lógica.
+            return rta;
         }
-        public void CancelarReserva()
+        public void CancelarReserva(Habitacion h)
         {
         }
     }
