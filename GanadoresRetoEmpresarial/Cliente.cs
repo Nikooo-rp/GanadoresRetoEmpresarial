@@ -11,6 +11,19 @@ namespace GanadoresRetoEmpresarial
         public Reserva CrearReserva(Habitacion h)
         {
             Reserva r = new Reserva();
+            Console.WriteLine("Ingresa el número de la habitación que deseas reservar:");
+            int numeroHabitacion = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ingresa la fecha de entrada de tu reserva (dd/mm/yyyy):");
+            string fechaEntrada = Console.ReadLine();
+            Console.WriteLine("Ingresa el número de noches que vas a quedarte:");
+            int numeroNoches = int.Parse(Console.ReadLine());
+
+            r.fechaEntrada = DateTime.Parse(fechaEntrada);
+            r.fechaSalida = r.fechaEntrada.AddDays(numeroNoches);
+
+            r.habitacion = h;
+            r.costoTotal = h.precioNoche * numeroNoches;
+
             // Lógica.
             return r;
         }
