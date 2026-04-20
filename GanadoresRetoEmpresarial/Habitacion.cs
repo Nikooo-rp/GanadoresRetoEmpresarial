@@ -10,14 +10,16 @@ namespace GanadoresRetoEmpresarial
 
         public string tipo, estado;
 
-        public void ConsultarDisponibilidad()
+        public double ConsultarPrecio()
         {
-
+            Console.WriteLine("El precio por noche de la habitación es: " + precioNoche);
+            return precioNoche;
         }
 
-        public void ConsultarPrecio()
+        public string GetEstado()
         {
-
+            Console.WriteLine("El estado de la habitación es: " + estado);
+            return estado;
         }
 
     }
