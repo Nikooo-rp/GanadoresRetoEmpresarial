@@ -26,11 +26,11 @@ namespace GanadoresRetoEmpresarial
         }
         public void GenerarReporte()
         {
-
+            // Reporta ingresos en periodo de tiempo (semanal, mensual, anual).
         }
         public void GestionarPromociones()
         {
-
+            // Datetimes específicos para descuentos en habitaciones, etc.
         }
     }
 }
