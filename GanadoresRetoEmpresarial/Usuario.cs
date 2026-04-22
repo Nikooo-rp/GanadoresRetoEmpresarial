@@ -11,7 +11,7 @@ namespace GanadoresRetoEmpresarial
 
         public string ConsultarDisponibilidad(Habitacion h) 
         {
-            return h.getEstado();
+            return h.GetEstado();
         }
 
     }

@@ -18,7 +18,7 @@ namespace GanadoresRetoEmpresarial
 
         public string GetEstado()
         {
-            Console.WriteLine("El estado de la habitación es: " + estado);
+            Console.WriteLine("El estado de la habitación es: " + estado); // <-- No es necesaria esta linea
             return estado;
         }
 
