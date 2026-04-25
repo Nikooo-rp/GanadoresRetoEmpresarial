@@ -7,149 +7,39 @@ namespace GanadoresRetoEmpresarial
 {
     public class Admin: Usuario
     {
-        public enum IntervaloReporte
-        {
-            Weekly,
-            Monthly,
-            Yearly
-        }
-        public class PeriodoIngresos
-        {
-            public string etiqueta;
-            public DateTime inicio;
-            public DateTime fin;
-            public decimal ingresos;
-        }
-        public List<PeriodoIngresos> Generar(
-        DateTime desde,
-        DateTime hasta,
-        IntervaloReporte intervalo)
-        {
-            if (desde > hasta)
-                throw new ArgumentException("'from' must be before 'to'.");
-
-            return intervalo switch
-            {
-                IntervaloReporte.Weekly => GroupByWeek(desde, hasta),
-                IntervaloReporte.Monthly => GroupByMonth(desde, hasta),
-                IntervaloReporte.Yearly => GroupByYear(desde, hasta),
-                _ => throw new ArgumentOutOfRangeException(nameof(intervalo))
-            };
-        }
-        public void ModficarCosto(Habitacion h, int nuevoCosto)
+        string idAdmin = string.Empty;
+        // -----------------------------------------------------------------------------------------
+        public void ModificarCosto(Habitacion h, int nuevoCosto)
         {
             h.precioNoche = nuevoCosto;
+            Console.WriteLine($"Costo de la habitación {h.numero} modificado a {nuevoCosto}");
         }
-        // -----------------------------------------------------------------------------------------
-        public decimal CalcularIngresos(DateTime inicio, DateTime fin) // Hace falta una lista de reservas.
+        public void GenerarReporte(List<Facturacion> allf)
         {
-            decimal ingresos = 0;
-            List<Reserva> reservas = new List<Reserva>();
+            Console.WriteLine("Ingresa el inicio del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
+            string inicio = Console.ReadLine();
+            Console.WriteLine("Ingresa el fin del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
+            string fin = Console.ReadLine();
 
-            //Console.WriteLine("Ingrese la fecha de inicio (dd/mm/yyyy):");
-            //string fechaInicio = Console.ReadLine();
-            //Console.WriteLine("Ingrese la fecha de fin (dd/mm/yyyy):");
-            //string fechaFin = Console.ReadLine();
+            DateTime fechaInicio = DateTime.Parse(inicio);
+            DateTime fechaFin = DateTime.Parse(fin);
+            decimal ingresosTotales = 0;
 
-            ingresos += reservas.Where(r => r.fechaEntrada >= inicio && r.fechaEntrada <= fin)
-                        .Sum(r => r.costoTotal);
-            return ingresos;
-        }
-        public string GenerarReporte(List<Reserva> reservas,DateTime inicio, DateTime fin, IntervaloReporte i)
-        {
-            string reporte = "";
-            var resultados = Generar(
-                desde: inicio,
-                hasta: fin,
-                intervalo: i
-                ); 
-            foreach (var periodo in resultados)
+            foreach (Facturacion f in allf)
             {
-                reporte += $"{periodo.etiqueta}: {periodo.ingresos:C}\n";
-            }
-            return reporte;
-        }
-        // ── Weekly ────────────────────────────────────────────────────────────
-        private List<PeriodoIngresos> GroupByWeek(DateTime from, DateTime to)
-        {
-            var periods = new List<PeriodoIngresos>();
-
-            // Snap to Monday of the starting week
-            var weekStart = from.AddDays(-(int)from.DayOfWeek + (int)DayOfWeek.Monday);
-            if (weekStart > from) weekStart = weekStart.AddDays(-7);
-
-            while (weekStart <= to)
-            {
-                var weekEnd = weekStart.AddDays(7).AddTicks(-1);
-                var clampedStart = weekStart < from ? from : weekStart;
-                var clampedEnd = weekEnd > to ? to : weekEnd;
-
-                periods.Add(new PeriodoIngresos
+                if (f.fecha >= fechaInicio && f.fecha <= fechaFin)
                 {
-                    etiqueta = $"Week of {weekStart:MMM dd, yyyy}",
-                    inicio = clampedStart,
-                    fin = clampedEnd,
-                    ingresos = CalcularIngresos(clampedStart, clampedEnd)
-                });
-
-                weekStart = weekStart.AddDays(7);
+                    Console.WriteLine($"Factura del: {f.fecha}, Cliente: {f.nombreCliente}, Total: {f.costoTotal}.");
+                    ingresosTotales += f.costoTotal;
+                }
             }
-
-            return periods;
+            Console.WriteLine($"Ingresos totales en el periodo {fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}: {ingresosTotales}");
         }
 
-        // ── Monthly ───────────────────────────────────────────────────────────
-        private List<PeriodoIngresos> GroupByMonth(DateTime from, DateTime to)
+        public void CalcularIngresos()
         {
-            var periods = new List<PeriodoIngresos>();
-            var current = new DateTime(from.Year, from.Month, 1);
-
-            while (current <= to)
-            {
-                var monthEnd = current.AddMonths(1).AddTicks(-1);
-                var clampedStart = current < from ? from : current;
-                var clampedEnd = monthEnd > to ? to : monthEnd;
-
-                periods.Add(new PeriodoIngresos
-                {
-                    etiqueta = current.ToString("MMMM yyyy"),
-                    inicio = clampedStart,
-                    fin = clampedEnd,
-                    ingresos = CalcularIngresos(clampedStart, clampedEnd)
-                });
-
-                current = current.AddMonths(1);
-            }
-
-            return periods;
+            // Para el cálculo de ingresos en periodos de tiempo, se hará después cuando se complejize la lógica del reporte.
         }
-
-        // ── Yearly ────────────────────────────────────────────────────────────
-        private List<PeriodoIngresos> GroupByYear(DateTime from, DateTime to)
-        {
-            var periods = new List<PeriodoIngresos>();
-            var current = new DateTime(from.Year, 1, 1);
-
-            while (current <= to)
-            {
-                var yearEnd = current.AddYears(1).AddTicks(-1);
-                var clampedStart = current < from ? from : current;
-                var clampedEnd = yearEnd > to ? to : yearEnd;
-
-                periods.Add(new PeriodoIngresos
-                {
-                    etiqueta = current.Year.ToString(),
-                    inicio = clampedStart,
-                    fin = clampedEnd,
-                    ingresos = CalcularIngresos(clampedStart, clampedEnd)
-                });
-
-                current = current.AddYears(1);
-            }
-
-            return periods;
-        }
-        // -----------------------------------------------------------------------------------------
         public void GestionarPromociones()
         {
             // Datetimes específicos para descuentos en habitaciones, etc.
