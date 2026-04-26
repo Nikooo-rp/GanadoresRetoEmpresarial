@@ -4,7 +4,9 @@ using System.Text;
 
 namespace GanadoresRetoEmpresarial
 {
-    public class ServicioAdicional: Servicios
+    public class Servicios
     {
+        public string tipo;
+        public double precio;
     }
 }
