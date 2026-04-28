@@ -6,9 +6,11 @@ namespace GanadoresRetoEmpresarial
 {
     public class Habitacion
     {
-        public int numero, precioNoche;
+        public int numero;
+        
+        public double precioNoche;
 
-        public string tipo, estado;
+        public string tipo, estadoH;
 
         public double ConsultarPrecio()
         {
@@ -18,7 +20,6 @@ namespace GanadoresRetoEmpresarial
 
         public string GetEstado()
         {
-            Console.WriteLine("El estado de la habitación es: " + estado); // <-- No es necesaria esta linea
             return estado;
         }
 
