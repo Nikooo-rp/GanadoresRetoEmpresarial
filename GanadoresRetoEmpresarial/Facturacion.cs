@@ -6,6 +6,6 @@ namespace GanadoresRetoEmpresarial
 {
     public class Facturacion
     {
-        public DateTime fecha;
+        public DateTime fechaFacturacion;
     }
 }
