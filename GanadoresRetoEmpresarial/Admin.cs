@@ -25,20 +25,43 @@ namespace GanadoresRetoEmpresarial
             DateTime fechaFin = DateTime.Parse(fin);
             decimal ingresosTotales = 0;
 
-            foreach (Facturacion f in allf)
+
+            // Para partir en meses, tomamos el mes de la primera y agrupamos todas las facturas que compartan ese mes en una nueva lista,
+            // Al encontrarnos con una factura con un nuevo mes, la guardamos, terminamos de recorrer la lista y luego volvemos a buscar
+            // facturas qeu compartan mes con la nueva, agrupándolos en una nueva lista.
+
+            //foreach (Facturacion f in allf)
+            //{
+            //    if (f.fecha >= fechaInicio && f.fecha <= fechaFin)
+            //    {
+            //        Console.WriteLine($"Factura del: {f.fecha}, Cliente: {f.nombreCliente}, Total: {f.costoTotal}.");
+            //        ingresosTotales += f.costoTotal;
+            //    }
+            //}
+
+            List<Facturacion> fInRange = allf.Where (f => f.fechaFacturacion >= fechaInicio && f.fechaFacturacion <= fechaFin).ToList();
+            Dictionary<int, List<Facturacion>> facturasPorMes = fInRange.GroupBy(f => f.fechaFacturacion.Month).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (KeyValuePair<int, List<Facturacion>> entry in facturasPorMes)
             {
-                if (f.fecha >= fechaInicio && f.fecha <= fechaFin)
-                {
-                    Console.WriteLine($"Factura del: {f.fecha}, Cliente: {f.nombreCliente}, Total: {f.costoTotal}.");
-                    ingresosTotales += f.costoTotal;
-                }
+                Console.WriteLine($"Ingresos de Mes #{entry.Key}");
+                decimal d = CalcularIngresos(entry.Value);
+                Console.WriteLine("$" + d);
+                ingresosTotales += d;
+
             }
-            Console.WriteLine($"Ingresos totales en el periodo {fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}: {ingresosTotales}");
+            Console.WriteLine($"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}");
+            Console.WriteLine("$" + ingresosTotales);
         }
 
-        public void CalcularIngresos()
+        public decimal CalcularIngresos(List<Facturacion> f)
         {
-            // Para el cálculo de ingresos en periodos de tiempo, se hará después cuando se complejize la lógica del reporte.
+            decimal ingresosTotales = 0;
+            foreach (Facturacion factura in f)
+            {
+                ingresosTotales += factura.costoTotal;
+            }
+            return ingresosTotales;
         }
         public void GestionarPromociones()
         {
