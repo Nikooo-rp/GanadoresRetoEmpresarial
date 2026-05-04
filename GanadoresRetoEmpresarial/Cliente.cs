@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace GanadoresRetoEmpresarial
 {
     public class Cliente: Usuario
     {
-        public string correo = string.Empty;
+        public string correo;
+
+        public Cliente(string correo, string nombre, string contraseña) : base(nombre, contraseña)
+        {
+            this.correo = correo;
+            this.nombre = nombre;
+            this.contraseña = contraseña;
+        }
         
         public Reserva CrearReserva(DateTime entrada, int numeroNoches, Habitacion h)
         {
