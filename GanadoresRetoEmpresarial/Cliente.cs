@@ -7,11 +7,11 @@ namespace GanadoresRetoEmpresarial
 {
     public class Cliente: Usuario
     {
-        public string correo;
+        public string correoCliente;
 
         public Cliente(string correo, string nombre, string contraseña) : base(nombre, contraseña)
         {
-            this.correo = correo;
+            this.correoCliente = correo;
             this.nombre = nombre;
             this.contraseña = contraseña;
         }

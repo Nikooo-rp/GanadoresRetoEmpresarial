@@ -6,7 +6,7 @@ namespace GanadoresRetoEmpresarial
 {
     public class Facturacion
     {
-        private static int contadorFacturas = 0;
+        private static int contadorFacturas = 0; // Es recomendable mover esto al program para seguir el numero de facturas desde ahí.
 
         public int numeroFactura { get; private set; }
         public DateTime fechaFacturacion { get; private set; }
@@ -17,7 +17,7 @@ namespace GanadoresRetoEmpresarial
 
         private Facturacion(string nombreCliente)
         {
-            numeroFactura = contadorFacturas;
+            // numeroFactura = contadorFacturas;
             fechaFacturacion = DateTime.Now;
             this.nombreCliente = nombreCliente;
             costoTotal = 0.0;
