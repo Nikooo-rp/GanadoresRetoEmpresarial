@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -18,18 +20,13 @@ namespace GanadoresRetoEmpresarial
         // -----------------------------------------------------------------------------------------
         public void ModificarCosto(Habitacion h, int nuevoCosto)
         {
-            h.precioNoche = nuevoCosto;
+            h.SetPrecioNoche(nuevoCosto);
             Console.WriteLine($"Costo de la habitación {h.numero} modificado a {nuevoCosto}");
         }
         public void GenerarReporte(List<Facturacion> allf)
         {
-            Console.WriteLine("Ingresa el inicio del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
-            string inicio = Console.ReadLine();
-            Console.WriteLine("Ingresa el fin del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
-            string fin = Console.ReadLine();
-
-            DateTime fechaInicio = DateTime.Parse(inicio);
-            DateTime fechaFin = DateTime.Parse(fin);
+            DateTime fechaInicio = AskDate("Ingresa el inicio del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
+            DateTime fechaFin = AskDate("Ingresa el fin del periodo de tiempo para el reporte (formato: yyyy-MM-dd):");
             decimal ingresosTotales = 0;
 
             // Para partir en meses, tomamos el mes de la primera y agrupamos todas las facturas que compartan ese mes en una nueva lista,
@@ -72,7 +69,7 @@ namespace GanadoresRetoEmpresarial
             decimal ingresosTotales = 0;
             foreach (Facturacion factura in f)
             {
-                ingresosTotales += factura.costoTotal;
+                ingresosTotales += (decimal)factura.costoTotal;
             }
             return ingresosTotales;
         }
@@ -92,17 +89,11 @@ namespace GanadoresRetoEmpresarial
                 }
             }
             Console.WriteLine("------------------------------------------------------------------------------------------");
-            Console.WriteLine("1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 4. Salir");
-            string rta = Console.ReadLine();
-            if (!int.TryParse(rta, out int opcion))
-            {
-                Console.WriteLine("Opción no válida. Por favor, selecciona una opción del 1 al 4.");
-                return;
-            }
+            int opcion = AskInt("1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 4. Salir");
             switch (opcion)
             {
                 case 1:
-                    Promocion nuevaPromocion = NuevaPromocion();
+                    Promocion? nuevaPromocion = NuevaPromocion();
                     if (nuevaPromocion != null)
                     {
                         promociones.Add(nuevaPromocion);
@@ -110,14 +101,13 @@ namespace GanadoresRetoEmpresarial
                     }
                     break;
                 case 2:
-                    Console.WriteLine("Ingresa el número de la promoción a modificar:");
-                    int numPromocion = int.Parse(Console.ReadLine());
+                    Console.WriteLine();
+                    int numPromocion = AskInt("Ingresa el número de la promoción a modificar:");
                     ModificarPromocion(promociones[numPromocion - 1]);
                     Console.WriteLine("Promoción modificada exitosamente.");
                     break;
                 case 3:
-                    Console.WriteLine("Ingresa el número de la promoción a eliminar:");
-                    int numPromocionEliminar = int.Parse(Console.ReadLine());
+                    int numPromocionEliminar = AskInt("Ingresa el número de la promoción a eliminar:");
                     promociones.RemoveAt(numPromocionEliminar - 1);
                     Console.WriteLine("Promoción eliminada exitosamente.");
                     break;
@@ -129,18 +119,13 @@ namespace GanadoresRetoEmpresarial
             }
 
         }
-        private Promocion NuevaPromocion()
+        private Promocion? NuevaPromocion()
         {
-            Console.WriteLine("Nombre de la promoción:");
-            string nombre = Console.ReadLine();
-            Console.WriteLine("Descripción de la promoción:");
-            string descripcion = Console.ReadLine();
-            Console.WriteLine("Descuento de la promoción (sin el %):");
-            decimal descuento = decimal.Parse(Console.ReadLine());
-            Console.WriteLine("Fecha de inicio de la promoción (dd/mm/yyyy):");
-            DateTime fechaInicio = DateTime.Parse(Console.ReadLine());
-            Console.WriteLine("Fecha de fin de la promoción (dd/mm/yyyy):");
-            DateTime fechaFin = DateTime.Parse(Console.ReadLine());
+            string nombre = AskString("Nombre de la promoción:");
+            string descripcion = AskString("Descripción de la promoción:");
+            decimal descuento = (decimal)AskInt("Descuento de la promoción (sin el %):");
+            DateTime fechaInicio = AskDate("Fecha de inicio de la promoción (dd/mm/yyyy):");
+            DateTime fechaFin = AskDate("Fecha de fin de la promoción (dd/mm/yyyy):");
             try
             {
                 Promocion nuevaPromocion = new Promocion(nombre, descripcion, descuento, fechaInicio, fechaFin);
@@ -155,35 +140,81 @@ namespace GanadoresRetoEmpresarial
         }
         private void ModificarPromocion(Promocion p)
         {
-            Console.WriteLine("1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez");
-            string rta = Console.ReadLine();
+            string rta = AskString("1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez");
             switch (rta)
             {
                 case "1":
-                    Console.WriteLine("Nuevo nombre:");
-                    p.nombre = Console.ReadLine();
+                    p.nombre = AskString("Nuevo nombre:");
                     Console.WriteLine("Nombre modificado exitosamente.");
                     break;
                 case "2":
-                    Console.WriteLine("Nueva descripción:");
-                    p.descripcion = Console.ReadLine();
+                    p.descripcion = AskString("Nueva descripción:");
                     Console.WriteLine("Descripción modificada exitosamente.");
                     break;
                 case "3":
-                    Console.WriteLine("Nuevo descuento (sin el %):");
-                    p.descuento = decimal.Parse(Console.ReadLine());
+                    p.descuento = (decimal)AskInt("Nuevo descuento (sin el %):");
                     Console.WriteLine("Descuento modificado exitosamente.");
                     break;
                 case "4":
-                    Console.WriteLine("Nueva fecha de inicio (dd/mm/yyyy):");
-                    DateTime fechaInicio = DateTime.Parse(Console.ReadLine());
-                    Console.WriteLine("Nueva fecha de fin (dd/mm/yyyy):");
-                    DateTime fechaFin = DateTime.Parse(Console.ReadLine());
-                    p.periodoValidez = (fechaInicio, fechaFin);
-                    Console.WriteLine("Periodo de validez modificado exitosamente.");
+                    bool validDate = false;
+                    DateTime fechaInicio;
+                    DateTime fechaFin;
+                    while (!validDate)
+                    {
+                        fechaInicio = AskDate("Nueva fecha de inicio (dd/mm/yyyy):");
+                        fechaFin = AskDate("Nueva fecha de fin (dd/mm/yyyy):");
+
+                        validDate = isValidPeriod(fechaInicio, fechaFin);
+                        if (!validDate)
+                            Console.WriteLine("Ingresa un periodo válido: el inicio no puede ser después de la fecha fin");
+                        else
+                        {
+                            p.periodoValidez = (fechaInicio, fechaFin);
+                            Console.WriteLine("Periodo de validez modificado exitosamente.");
+                        }
+                    }
                     break;
             }
 
+        }
+
+        private DateTime AskDate(string prompt)
+        {
+            DateTime value;
+            do
+            {
+                Console.Write(prompt);
+                if (!DateTime.TryParseExact(Console.ReadLine(), "yyyy-MM-dd",
+                    null, System.Globalization.DateTimeStyles.None, out value))
+                    Console.WriteLine("  ⚠ Usa el formato yyyy-MM-dd.");
+            } while (value == default);
+            return value;
+        }
+        private int AskInt(string prompt)
+        {
+            int value;
+            while (!int.TryParse(Console.ReadLine(), out value))
+            {
+                Console.WriteLine("  ⚠ Debe ser un número.");
+                Console.Write(prompt);
+            }
+            return value;
+        }
+        private string AskString(string prompt)
+        {
+            string? value;
+            do
+            {
+                Console.Write(prompt);
+                value = Console.ReadLine()?.Trim();
+                if (string.IsNullOrEmpty(value))
+                    Console.WriteLine("  ⚠ Can't be empty, try again.");
+            } while (string.IsNullOrEmpty(value));
+            return value;
+        }
+        private bool isValidPeriod(DateTime start, DateTime end)
+        {
+            return start <= end; // Puede ser un solo día.
         }
     }
 }
