@@ -11,6 +11,10 @@ namespace GanadoresRetoEmpresarial
     {
         string idAdmin = string.Empty;
 
+        public Habitacion h;
+        public List<Promocion> promocions;
+        List<Facturacion> facturacions;
+
         public Admin(string idAdmin, string nombre, string contraseña) : base(nombre, contraseña)
         {
             this.idAdmin = idAdmin;
@@ -179,13 +183,13 @@ namespace GanadoresRetoEmpresarial
 
         public void MenuAdmin()
         {
-            bool salir = false;
+            bool salir = true;
 
             while (!salir)
             {
                 Console.WriteLine("Bienvenido al menú del admin");
                 Console.WriteLine("¿Qué quieres hacer");
-                Console.WriteLine("[1] Modificar el costo de las habitaciones." +
+                Console.WriteLine("[1] Modificar el costo de una habitacion." +
                     "\n [2] Gestionar promociones y tarifas especiales." +
                     "\n [3] Calcular ingresos." +
                     "\n [4] Generar reportes." +
@@ -196,18 +200,23 @@ namespace GanadoresRetoEmpresarial
                 switch (opcion)
                 {
                     case 1:
-
+                        ModificarCosto(h,(int)h.precioNoche);
                         break;
                     case 2:
-
+                        GestionarPromociones(promocions);
                         break;
                     case 3:
-
+                        CalcularIngresos(facturacions);
                         break;
                     case 4:
-
+                        GenerarReporte(facturacions);
                         break;
                     case 0:
+                        salir = true;
+                        break;
+                }
+            }
+        }
         private DateTime AskDate(string prompt)
         {
             DateTime value;
