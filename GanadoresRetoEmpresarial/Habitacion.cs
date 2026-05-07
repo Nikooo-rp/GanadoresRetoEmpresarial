@@ -20,13 +20,13 @@ namespace GanadoresRetoEmpresarial
 {    
     public class Habitacion
     {
-        public int numero { get; private set; }
-        
-        public double precioNoche { get; private set; }
+        public int numero;
 
-        public TipoHabitacion tipo { get; private set; }
+        public double precioNoche;
 
-        public EstadoHabitacion estadoH { get; private set; }
+        public TipoHabitacion tipo;
+
+        public EstadoHabitacion estadoH;
 
         public Habitacion(int numero, double precioNoche, TipoHabitacion tipo)
         {

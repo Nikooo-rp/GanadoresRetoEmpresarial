@@ -72,7 +72,7 @@ namespace GanadoresRetoEmpresarial
             decimal ingresosTotales = 0;
             foreach (Facturacion factura in f)
             {
-                ingresosTotales += factura.costoTotal;
+                ingresosTotales += f.costoTotal;
             }
             return ingresosTotales;
         }
@@ -183,7 +183,45 @@ namespace GanadoresRetoEmpresarial
                     Console.WriteLine("Periodo de validez modificado exitosamente.");
                     break;
             }
+        }
 
+        public void MenuAdmin()
+        {
+            bool salir = false;
+
+            while (!salir)
+            {
+                Console.WriteLine("Bienvenido al menú del admin");
+                Console.WriteLine("¿Qué quieres hacer");
+                Console.WriteLine("[1] Modificar el costo de las habitaciones." +
+                    "\n [2] Gestionar promociones y tarifas especiales." +
+                    "\n [3] Calcular ingresos." +
+                    "\n [4] Generar reportes." +
+                    "\n [0] Salir del menú.");
+
+                int opcion = int.TryParse(Console.ReadLine(), out int op) ? op : 0;
+
+                switch (opcion)
+                {
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 0:
+
+                        break;
+
+
+                }
+            }
         }
     }
 }
