@@ -11,9 +11,9 @@ namespace GanadoresRetoEmpresarial
     {
         string idAdmin = string.Empty;
 
-        public Habitacion h;
+        public List<Habitacion> habitaciones;
         public List<Promocion> promocions;
-        List<Facturacion> facturacions;
+        public List<Facturacion> facturacions;
 
         public Admin(string idAdmin, string nombre, string contraseña) : base(nombre, contraseña)
         {
@@ -22,7 +22,7 @@ namespace GanadoresRetoEmpresarial
             this.contraseña = contraseña;
         }
         // -----------------------------------------------------------------------------------------
-        public void ModificarCosto(Habitacion h, int nuevoCosto)
+        public void ModificarCosto(Habitacion h, double nuevoCosto)
         {
             h.SetPrecioNoche(nuevoCosto);
             Console.WriteLine($"Costo de la habitación {h.numero} modificado a {nuevoCosto}");
@@ -183,7 +183,7 @@ namespace GanadoresRetoEmpresarial
 
         public void MenuAdmin()
         {
-            bool salir = true;
+            bool salir = false;
 
             while (!salir)
             {
@@ -200,7 +200,17 @@ namespace GanadoresRetoEmpresarial
                 switch (opcion)
                 {
                     case 1:
-                        ModificarCosto(h,(int)h.precioNoche);
+                        for (int i = 0; i<habitaciones.Count; i++)
+                        {
+                            Console.WriteLine($"{i + 1}. Habitación #{habitaciones[i].numero}");
+                        }
+                        int opc = int.Parse(Console.ReadLine());
+
+                        Habitacion habitacionSeleccionada = habitaciones[opc - 1];
+
+                        Console.WriteLine("Nuevo precio:");
+                        double nuevoPrecio = double.Parse(Console.ReadLine());
+                        ModificarCosto(habitacionSeleccionada,nuevoPrecio);
                         break;
                     case 2:
                         GestionarPromociones(promocions);
@@ -232,6 +242,7 @@ namespace GanadoresRetoEmpresarial
         private int AskInt(string prompt)
         {
             int value;
+            Console.Write(prompt);
             while (!int.TryParse(Console.ReadLine(), out value))
             {
                 Console.WriteLine("  ⚠ Debe ser un número.");
