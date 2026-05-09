@@ -44,18 +44,18 @@ namespace GanadoresRetoEmpresarial
         {
             Console.WriteLine($"Registrando servicio adicional: {this.descripcion}");
             Console.WriteLine($"Fecha: {this.fecha.ToShortDateString()}");
-            Console.WriteLine($"Tipo: {this.GetTipo()}");
-            Console.WriteLine($"Precio: {this.GetPrecio():C}");
+            Console.WriteLine($"Tipo: {this.tipo}");
+            Console.WriteLine($"Precio: {this.precio:C}");
 
             // Aquí se podría agregar lógica para guardar en base de datos
             return this;
         }
 
         // Método para calcular el costo del servicio adicional
-        public double CalcularCosto()
+        public override double CalcularCosto()
         {
             // Se puede agregar lógica adicional como impuestos, descuentos, etc.
-            double costoBase = this.GetPrecio();
+            double costoBase = this.precio;
             double impuesto = costoBase * 0.19; // 19% de IVA como ejemplo
             double costoTotal = costoBase + impuesto;
 
