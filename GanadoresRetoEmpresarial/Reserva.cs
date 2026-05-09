@@ -13,6 +13,9 @@ namespace GanadoresRetoEmpresarial
         private string estadoR;
         private double costoTotal;
 
+        public Habitacion habitacion; 
+
+
         // Constructor
         public Reserva(DateTime fechaEntrada, DateTime fechaSalida, double costoPorNoche)
         {

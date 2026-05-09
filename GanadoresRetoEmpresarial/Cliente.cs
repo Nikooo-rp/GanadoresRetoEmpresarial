@@ -50,5 +50,10 @@ namespace GanadoresRetoEmpresarial
             r.CancelarReserva();
             Console.WriteLine("Reserva cancelada exitosamente.");
         }
+
+        internal Reserva CrearReserva(DateTime fechaEntrada, DateTime fechaSalida, Habitacion habitacionSeleccionada)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
