@@ -7,7 +7,7 @@ namespace GanadoresRetoEmpresarial
     public class ServicioAdicional: Servicios
     {
         // Campos adicionales
-        private string descripcion;
+        
         private DateTime fecha;
 
         // Constructor

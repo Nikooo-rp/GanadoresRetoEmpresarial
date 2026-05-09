@@ -8,6 +8,7 @@ namespace GanadoresRetoEmpresarial
     {
         public string tipo { get; protected set; }
         public double precio { get; protected set; }
+        public string descripcion { get; protected set; }
 
         public Servicios(string tipo, double precio)
         {
