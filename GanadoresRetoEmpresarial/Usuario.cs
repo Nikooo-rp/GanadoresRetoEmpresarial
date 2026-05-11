@@ -7,7 +7,7 @@ namespace GanadoresRetoEmpresarial
     public class Usuario
     {
         public string nombre = string.Empty;
-        protected string contraseña = string.Empty;
+        public string contraseña = string.Empty;
 
         public Usuario(string nombre, string contraseña)
         {
@@ -17,7 +17,7 @@ namespace GanadoresRetoEmpresarial
 
         public string ConsultarDisponibilidad(Habitacion h) 
         {
-            return h.GetEstado();
+            return h.EstaDisponible() ? "Disponible" : "No disponible";
         }
 
     }

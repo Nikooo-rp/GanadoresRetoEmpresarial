@@ -6,14 +6,16 @@ namespace GanadoresRetoEmpresarial
 {
     public class MenuCliente
     {
+        /*private List<Habitacion> habitacionesDisponibles;*/
+        private HotelData data;
         private Cliente cliente;
-        private List<Habitacion> habitacionesDisponibles;
         private List<Reserva> reservasCliente;
 
-        public MenuCliente(Cliente cliente, List<Habitacion> habitaciones)
+
+        public MenuCliente(Cliente cliente, HotelData data)
         {
             this.cliente = cliente;
-            this.habitacionesDisponibles = habitaciones;
+            this.data = data;
             this.reservasCliente = new List<Reserva>();
         }
 
@@ -85,7 +87,7 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("N°  | Número | Tipo           | Precio/noche | Estado");
             Console.WriteLine("--------------------------------------------------------");
 
-            List<Habitacion> habitacionesDisponiblesActual = habitacionesDisponibles
+            List<Habitacion> habitacionesDisponiblesActual = data.habitaciones
                 .Where(h => h.EstaDisponible())
                 .ToList();
 
@@ -170,7 +172,7 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("Número | Tipo           | Precio/noche | Estado");
             Console.WriteLine("------------------------------------------------");
 
-            foreach (Habitacion habitacion in habitacionesDisponibles)
+            foreach (Habitacion habitacion in data.habitaciones)
             {
                 string disponibilidad = habitacion.EstaDisponible() ? "Disponible" : habitacion.estadoH.ToString();
                 Console.WriteLine($"{habitacion.numero,-6} | {habitacion.tipo,-14} | ${habitacion.precioNoche,-11} | {disponibilidad}");
@@ -191,7 +193,7 @@ namespace GanadoresRetoEmpresarial
                         Console.WriteLine("Número | Tipo           | Precio/noche | Disponible para esas fechas");
                         Console.WriteLine("--------------------------------------------------------------");
 
-                        foreach (Habitacion habitacion in habitacionesDisponibles)
+                        foreach (Habitacion habitacion in data.habitaciones)
                         {
                             bool disponible = VerificarDisponibilidadFechas(habitacion, fechaEntrada, fechaSalida);
                             string estado = disponible && habitacion.EstaDisponible() ? "Sí" : "No";
@@ -406,15 +408,15 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("N°  | Número | Tipo           | Precio/noche");
             Console.WriteLine("---------------------------------------------");
 
-            for (int i = 0; i < habitacionesDisponibles.Count; i++)
+            for (int i = 0; i < data.habitaciones.Count; i++)
             {
-                Console.WriteLine($"{i + 1,-3} | {habitacionesDisponibles[i].numero,-6} | {habitacionesDisponibles[i].tipo,-14} | ${habitacionesDisponibles[i].precioNoche}");
+                Console.WriteLine($"{i + 1,-3} | {data.habitaciones[i].numero,-6} | {data.habitaciones[i].tipo,-14} | ${data.habitaciones[i].precioNoche}");
             }
 
             Console.Write("\nSeleccione una habitación: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= habitacionesDisponibles.Count)
+            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= data.habitaciones.Count)
             {
-                Habitacion habitacion = habitacionesDisponibles[seleccion - 1];
+                Habitacion habitacion = data.habitaciones[seleccion - 1];
                 Console.Write("Ingrese el número de noches: ");
                 if (int.TryParse(Console.ReadLine(), out int noches) && noches > 0)
                 {
