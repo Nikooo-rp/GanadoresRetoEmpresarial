@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nicoe\\OneDrive\\Documents\\Universidad\\Semestre 3\\P.O.O\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj": {}
+    "C:\\Users\\TUF\\Documents\\UPB 2026\\2026-1\\POO\\Reto Empresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nicoe\\OneDrive\\Documents\\Universidad\\Semestre 3\\P.O.O\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj": {
+    "C:\\Users\\TUF\\Documents\\UPB 2026\\2026-1\\POO\\Reto Empresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nicoe\\OneDrive\\Documents\\Universidad\\Semestre 3\\P.O.O\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj",
+        "projectUniqueName": "C:\\Users\\TUF\\Documents\\UPB 2026\\2026-1\\POO\\Reto Empresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj",
         "projectName": "GanadoresRetoEmpresarial",
-        "projectPath": "C:\\Users\\nicoe\\OneDrive\\Documents\\Universidad\\Semestre 3\\P.O.O\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj",
-        "packagesPath": "C:\\Users\\nicoe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nicoe\\OneDrive\\Documents\\Universidad\\Semestre 3\\P.O.O\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial\\obj\\",
+        "projectPath": "C:\\Users\\TUF\\Documents\\UPB 2026\\2026-1\\POO\\Reto Empresarial\\GanadoresRetoEmpresarial\\GanadoresRetoEmpresarial.csproj",
+        "packagesPath": "C:\\Users\\TUF\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\TUF\\Documents\\UPB 2026\\2026-1\\POO\\Reto Empresarial\\GanadoresRetoEmpresarial\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\nicoe\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\TUF\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -45,7 +41,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
@@ -67,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300-preview.0.26177.108/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
