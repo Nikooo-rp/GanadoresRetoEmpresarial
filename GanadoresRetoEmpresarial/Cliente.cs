@@ -8,6 +8,7 @@ namespace GanadoresRetoEmpresarial
     public class Cliente: Usuario
     {
         public string correoCliente;
+        public List<Reserva> reservasCliente = new List<Reserva>();
 
         public Cliente(string correo, string nombre, string contraseña) : base(nombre, contraseña)
         {
