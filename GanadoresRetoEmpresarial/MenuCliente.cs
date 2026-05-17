@@ -6,20 +6,15 @@ namespace GanadoresRetoEmpresarial
 {
     public class MenuCliente
     {
-        /*private List<Habitacion> habitacionesDisponibles;*/
-        private List<Reserva> reservasCliente;
+        private List<Reserva>? reservasCliente;
         HotelData? data = null;
-        Cliente cliente = null;
-
-        public MenuCliente()
-        {
-            this.reservasCliente = new List<Reserva>();
-        }
+        Cliente? cliente = null;
 
         public void MostrarMenu(Cliente cliente, HotelData data)
         {
             this.data = data;
             this.cliente = cliente;
+            this.reservasCliente = cliente.reservasCliente;
 
             Console.Clear();
             Console.WriteLine("=== MENÚ DEL CLIENTE ===");
