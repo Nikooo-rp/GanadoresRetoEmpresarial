@@ -7,7 +7,7 @@ namespace GanadoresRetoEmpresarial
 {
     public class MenuRecepcionista
     {
-        public static void MostrarMenu(Recepcionista admin, List<Habitacion> habitacionesHotel, List<Cliente> baseDatosClientes, List<ServicioAdicional> serviciosGlobales)
+        public static void Mostrar(Recepcionista admin, List<Habitacion> habitacionesHotel, List<Cliente> baseDatosClientes, List<ServicioAdicional> serviciosGlobales)
         {
             bool sesionActiva = true;
                         

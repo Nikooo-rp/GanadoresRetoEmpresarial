@@ -5,6 +5,8 @@
         static void Main(string[] args)
         {
             var data = new HotelData();
+            MenuCliente menuCliente = new MenuCliente();
+            MenuAdmin menuAdmin = new MenuAdmin();
 
             bool running = true;
             while (running)
@@ -41,16 +43,14 @@
                         switch (usuario)
                         {
                             case Cliente c:
-                                MenuCliente menuCliente = new MenuCliente(c, data);
-                                menuCliente.MostrarMenu();
+                                menuCliente.MostrarMenu(c, data);
                                 break;
                             case Recepcionista r:
                                 //MenuRecepcionista menuRecepcionista = new MenuRecepcionista(r, data);
                                 //menuRecepcionista.MostrarMenu();
                                 break;
                             case Admin a:
-                                //Console.WriteLine($"Bienvenido, {a.nombre} (Admin)");
-                                //a.MenuAdmin();
+                                menuAdmin.Mostrar(a, data);
                                 break;
                         }
                     }

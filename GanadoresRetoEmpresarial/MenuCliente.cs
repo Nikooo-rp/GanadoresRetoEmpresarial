@@ -7,72 +7,71 @@ namespace GanadoresRetoEmpresarial
     public class MenuCliente
     {
         /*private List<Habitacion> habitacionesDisponibles;*/
-        private HotelData data;
-        private Cliente cliente;
         private List<Reserva> reservasCliente;
+        HotelData? data = null;
+        Cliente cliente = null;
 
-
-        public MenuCliente(Cliente cliente, HotelData data)
+        public MenuCliente()
         {
-            this.cliente = cliente;
-            this.data = data;
             this.reservasCliente = new List<Reserva>();
         }
 
-        public void MostrarMenu()
+        public void MostrarMenu(Cliente cliente, HotelData data)
         {
-            
-                Console.Clear();
-                Console.WriteLine("=== MENÚ DEL CLIENTE ===");
-                Console.WriteLine($"Bienvenido: {cliente.nombre}");
-                Console.WriteLine($"Correo: {cliente.correoCliente}");
-                Console.WriteLine("\n--- OPCIONES ---");
-                Console.WriteLine("1. Crear nueva reserva");
-                Console.WriteLine("2. Consultar disponibilidad de habitaciones");
-                Console.WriteLine("3. Ver todas mis reservas");
-                Console.WriteLine("4. Cancelar una reserva");
-                Console.WriteLine("5. Ver detalle de una reserva específica");
-                Console.WriteLine("6. Modificar fechas de una reserva");
-                Console.WriteLine("7. Consultar precio de una habitación");
-                Console.WriteLine("0. Salir");
-                Console.Write("\nSeleccione una opción: ");
-               int opcion=Convert.ToInt32(Console.ReadLine());
-                    switch (opcion)
-                    {
-                        case 1:
-                            CrearReserva();
-                            break;
-                        case 2:
-                            ConsultarDisponibilidad();
-                            break;
-                        case 3:
-                            VerTodasReservas();
-                            break;
-                        case 4:
-                            CancelarReserva();
-                            break;
-                        case 5:
-                            VerDetalleReserva();
-                            break;
-                        case 6:
-                            ModificarFechasReserva();
-                            break;
-                        case 7:
-                            ConsultarPrecioHabitacion();
-                            break;
-                        case 0:
-                            Console.WriteLine("\n¡Gracias por usar nuestro servicio!");
-                            break;
-                        default:
-                            Console.WriteLine("Opción no válida");
-                            break;
-                    }
+            this.data = data;
+            this.cliente = cliente;
 
-                    if (opcion != 0)
-                    {
-                        Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                        Console.ReadKey();
-                    }
+            Console.Clear();
+            Console.WriteLine("=== MENÚ DEL CLIENTE ===");
+            Console.WriteLine($"Bienvenido: {cliente.nombre}");
+            Console.WriteLine($"Correo: {cliente.correoCliente}");
+            Console.WriteLine("\n--- OPCIONES ---");
+            Console.WriteLine("1. Crear nueva reserva");
+            Console.WriteLine("2. Consultar disponibilidad de habitaciones");
+            Console.WriteLine("3. Ver todas mis reservas");
+            Console.WriteLine("4. Cancelar una reserva");
+            Console.WriteLine("5. Ver detalle de una reserva específica");
+            Console.WriteLine("6. Modificar fechas de una reserva");
+            Console.WriteLine("7. Consultar precio de una habitación");
+            Console.WriteLine("0. Salir");
+            Console.Write("\nSeleccione una opción: ");
+            int opcion=Convert.ToInt32(Console.ReadLine());
+                switch (opcion)
+                {
+                    case 1:
+                        CrearReserva();
+                        break;
+                    case 2:
+                        ConsultarDisponibilidad();
+                        break;
+                    case 3:
+                        VerTodasReservas();
+                        break;
+                    case 4:
+                        CancelarReserva();
+                        break;
+                    case 5:
+                        VerDetalleReserva();
+                        break;
+                    case 6:
+                        ModificarFechasReserva();
+                        break;
+                    case 7:
+                        ConsultarPrecioHabitacion();
+                        break;
+                    case 0:
+                        Console.WriteLine("\n¡Gracias por usar nuestro servicio!");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida");
+                        break;
+                }
+
+                if (opcion != 0)
+                {
+                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                    Console.ReadKey();
+                }
                 
             
         }
