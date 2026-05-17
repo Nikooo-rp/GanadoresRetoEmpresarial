@@ -6,12 +6,13 @@ namespace GanadoresRetoEmpresarial
 {
     public class HotelData
     {
-        List<Cliente> clientes = new List<Cliente>();
-        List<Admin> admins = new List<Admin>();
-        List<Recepcionista> recepcionistas = new List<Recepcionista>();
-        List<Facturacion> facturas = new List<Facturacion>();
-        List<Habitacion> habitaciones = new List<Habitacion>();
-        List<Promocion> promociones = new List<Promocion>();
+        public List<Cliente> clientes = new List<Cliente>();
+        public List<Admin> admins = new List<Admin>();
+        public List<Recepcionista> recepcionistas = new List<Recepcionista>();
+        public List<Facturacion> facturas = new List<Facturacion>();
+        public List<Habitacion> habitaciones = new List<Habitacion>();
+        public List<Promocion> promociones = new List<Promocion>();
+        public List<ServicioAdicional> serviciosAdicionales = new List<ServicioAdicional>();
 
     }
 }

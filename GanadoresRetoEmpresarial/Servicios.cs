@@ -21,6 +21,11 @@ namespace GanadoresRetoEmpresarial
             return precio;
         }
 
+        public virtual void MostrarInformacion()
+        {
+            Console.WriteLine($"Servicio: {tipo}");
+            Console.WriteLine($"Precio: {precio:C}");
+        }
         public override string ToString()
         {
             return $"Servicio: {tipo}, Precio: {precio}";
