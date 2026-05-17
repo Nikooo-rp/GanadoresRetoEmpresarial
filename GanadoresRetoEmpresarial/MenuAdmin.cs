@@ -27,27 +27,43 @@ namespace GanadoresRetoEmpresarial
                     case 1:
                         for (int i = 0; i < data.habitaciones.Count; i++)
                         {
-                            Console.WriteLine($"{i + 1}. Habitación #{habitaciones[i].numero}");
+                            Console.WriteLine($"{i + 1}. Habitación #{data.habitaciones[i].numero}");
                         }
-                        int opc = int.Parse(Console.ReadLine());
 
-                        Habitacion habitacionSeleccionada = habitaciones[opc - 1];
+                        Console.Write("Seleccione una habitación: ");
+
+                        int opc = int.TryParse(Console.ReadLine(), out int seleccion) ? seleccion : 1;
+
+                        Habitacion habitacionSeleccionada = data.habitaciones[opc - 1];
 
                         Console.WriteLine("Nuevo precio:");
-                        double nuevoPrecio = double.Parse(Console.ReadLine());
+                        double nuevoPrecio;
+                        if (double.TryParse(Console.ReadLine(), out double precio) && precio >= 0)
+                        {
+                            nuevoPrecio = precio;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Precio inválido. Se mantendrá el precio original.");
+                            nuevoPrecio = habitacionSeleccionada.precioNoche;
+                        }
+
                         a.ModificarCosto(habitacionSeleccionada, nuevoPrecio);
                         break;
                     case 2:
-                        GestionarPromociones(promocions);
+                        a.GestionarPromociones(data.promociones);
                         break;
                     case 3:
-                        CalcularIngresos(facturacions);
+                        a.CalcularIngresos(data.facturas);
                         break;
                     case 4:
-                        GenerarReporte(facturacions);
+                        a.GenerarReporte(data.facturas);
                         break;
                     case 0:
                         salir = true;
+                        break;
+                    default:
+                        Console.WriteLine("Opción inválida.");
                         break;
                 }
             }

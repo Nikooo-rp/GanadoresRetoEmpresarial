@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
@@ -278,4 +278,4 @@ namespace GanadoresRetoEmpresarial
         }
     }
 }
->>>>>>> 66b8016b02cda43c768e1407c0a564655cf72632
+
