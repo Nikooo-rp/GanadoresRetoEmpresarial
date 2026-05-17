@@ -20,34 +20,41 @@ namespace GanadoresRetoEmpresarial
                     "\n [4] Generar reportes." +
                     "\n [0] Salir del menú.");
 
+                //Si el valor es inválido, la opción será 0 (Salir del menú).
                 int opcion = int.TryParse(Console.ReadLine(), out int op) ? op : 0;
 
                 switch (opcion)
                 {
                     case 1:
+                        //Muestra todas las habitaciones disponibles.
                         for (int i = 0; i < data.habitaciones.Count; i++)
                         {
                             Console.WriteLine($"{i + 1}. Habitación #{data.habitaciones[i].numero}");
                         }
 
                         Console.Write("Seleccione una habitación: ");
-
+                        
+                        //Obtiene la habitación seleccionada.
                         int opc = int.TryParse(Console.ReadLine(), out int seleccion) ? seleccion : 1;
 
                         Habitacion habitacionSeleccionada = data.habitaciones[opc - 1];
 
                         Console.WriteLine("Nuevo precio:");
                         double nuevoPrecio;
+
+                        //Valida que el nuevo precio sea numérico y positivo.
                         if (double.TryParse(Console.ReadLine(), out double precio) && precio >= 0)
                         {
                             nuevoPrecio = precio;
                         }
                         else
                         {
+                            //Si el valor es inválido, se mantiene el precio original.
                             Console.WriteLine("Precio inválido. Se mantendrá el precio original.");
                             nuevoPrecio = habitacionSeleccionada.precioNoche;
                         }
 
+                        //Llama al método para modificar el costo.
                         a.ModificarCosto(habitacionSeleccionada, nuevoPrecio);
                         break;
                     case 2:
