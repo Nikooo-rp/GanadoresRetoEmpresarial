@@ -5,121 +5,118 @@ using System.Text;
 namespace GanadoresRetoEmpresarial
 {
     public class Recepcionista : Usuario
-    {
-        public string idRecepcionista = string.Empty;
-        public Reserva reservaGestionada;
-
-        public List<Reserva> Reservas = new List<Reserva>();
-        public List<Cliente> ClientesActivos = new List<Cliente>();
-
-        public Recepcionista(string nombre, string contraseña, string idRecepcionista) : base(nombre, contraseña)
+    {             
+        // Constructor principal. Utiliza la palabra clave 'base' para enviar         
+        public Recepcionista(string nombre, string contraseña) : base(nombre, contraseña)
         {
-            this.idRecepcionista = idRecepcionista;
-        }             
+            // No necesitamos inicializar listas locales porque usamos HotelData.
+        }
 
-        public Reserva RegistrarReserva(Cliente cliente, Habitacion habitacion, int noches)
-        {
-            /* ¿Por qué evaluamos contra 'null' y usamos '||')? 'null' representa la ausencia total de información en el sistema. 
-              El operador '||' significa "O". Con esto le decimos al sistema:
-             "Si el registro del cliente está vacío, O si el registro de la habitación está vacío, 
-             detén el proceso inmediatamente". Es una medida de seguridad para impedir 
-             que el algoritmo intente crear una transacción con información incompleta.*/
+        public Reserva RegistrarReserva(Cliente cliente, Habitacion habitacion, int noches, HotelData data)
+        {            
+            
             if (cliente == null || habitacion == null)
             {
-                Console.WriteLine("[ERROR] Faltan datos del cliente o la habitación.");
-                return null;
+                throw new ArgumentNullException("Faltan datos críticos para completar la reserva.");
             }
 
+            // Validamos que la habitación realmente esté disponible antes de proceder.
             if (habitacion.estadoH != EstadoHabitacion.Disponible)
-            {
-                Console.WriteLine($"[AVISO] Imposible asignar habitación {habitacion.numero}. Estado actual: {habitacion.estadoH}.");
+            {                
                 return null;
             }
 
+            // Lógica de fechas
             DateTime entrada = DateTime.Now;
             DateTime salida = DateTime.Now.AddDays(noches);
-            Reserva nuevaReserva = new Reserva(entrada, salida, habitacion.precioNoche);
 
+            // Instanciamos la nueva reserva
+            Reserva nuevaReserva = new Reserva(entrada, salida, habitacion.precioNoche);
             nuevaReserva.ModificarEstado("Confirmada");
+            nuevaReserva.habitacion = habitacion; // Vinculamos la habitación a la reserva
+
+            // Cambiamos el estado de la habitación
             habitacion.GetEstado(EstadoHabitacion.Ocupada);
 
-            cliente.Reservas.Add(nuevaReserva);
-            this.Reservas.Add(nuevaReserva);
-            this.reservaGestionada = nuevaReserva;
+            // Actualizamos la base de datos central (HotelData)
+            cliente.reservasCliente.Add(nuevaReserva);
 
-            Console.WriteLine($"[ÉXITO] Reserva asignada a {cliente.correoCliente}. Habitación {habitacion.numero} reservada.");
             return nuevaReserva;
         }
-
-        public Reserva CancelarReserva(Reserva reserva)
-        {
-            if (reserva == null || reserva.GetEstadoR() == "Completada") return reserva;
-            reserva.ModificarEstado("Cancelada");
-            Console.WriteLine("[ÉXITO] Reserva cancelada correctamente.");
-            return reserva;
-        }
-
-        public Reserva ModificarHabitación(Reserva reserva, Habitacion habitacionActual, Habitacion nuevaHabitacion)
-        {
-            if (reserva == null || habitacionActual == null || nuevaHabitacion == null) return reserva;
-
-            if (nuevaHabitacion.estadoH != EstadoHabitacion.Disponible)
-            {
-                Console.WriteLine($"[AVISO] La habitación {nuevaHabitacion.numero} ya se encuentra ocupada.");
-                return reserva;
-            }
-
-            habitacionActual.GetEstado(EstadoHabitacion.Disponible);
-            nuevaHabitacion.GetEstado(EstadoHabitacion.Ocupada);
-            reserva.RecalcularCosto(nuevaHabitacion.precioNoche);
-
-            Console.WriteLine($"[ÉXITO] Habitación actualizada a {nuevaHabitacion.numero}. Costo recalculado.");
-            return reserva;
-        }
-
-        public void FinalizarEstancia(Reserva reserva, Habitacion habitacion, Cliente cliente, List<ServicioAdicional> servicios)
-        {
-            if (reserva == null || reserva.GetEstadoR() != "Confirmada") return;
-
-            reserva.ModificarEstado("Completada");
-            habitacion.GetEstado(EstadoHabitacion.Disponible);
-
-            Facturacion nuevaFactura = Facturacion.CalcularCostos(habitacion, reserva.GetNumeroNoches(), servicios, cliente.nombre);
-            Console.WriteLine($"[ÉXITO] Estancia finalizada. Generando facturación para {cliente.nombre}...");
-        }
-
-        public Cliente ConsultarInfoHuesped(string correoCliente)
-        {
-            if (string.IsNullOrEmpty(correoCliente)) return null;
-
-            foreach (Cliente nodoCliente in ClientesActivos)
-            {
-                if (nodoCliente != null && nodoCliente.correoCliente == correoCliente)
-                {
-                    Console.WriteLine($"[ÉXITO] Información encontrada para {nodoCliente.nombre}.");
-                    return nodoCliente;
-                }
-            }
-            Console.WriteLine("[FALLO] Cliente no encontrado.");
-            return null;
-        }
-
-        public ServicioAdicional SolicitarServicioAdicional(Cliente cliente, string tipo, double precio)
+                
+        // Crea un servicio adicional, le asigna una descripción y lo guarda en HotelData.       
+        public ServicioAdicional SolicitarServicioAdicional(Cliente cliente, string tipo, string descripcion, double precio, HotelData data)
         {
             if (cliente == null) return null;
 
-            ServicioAdicional nuevoServicio = new ServicioAdicional("Adicional", precio, tipo, DateTime.Now);
+            // Instanciamos el servicio pasando la descripción solicitada por el usuario.
+            ServicioAdicional nuevoServicio = new ServicioAdicional(tipo, precio, descripcion, DateTime.Now);
             nuevoServicio.Registrar();
 
-            Console.WriteLine($"[ÉXITO] Servicio '{tipo}' registrado.");
+            // Guardamos el servicio en la base de datos central
+            data.serviciosAdicionales.Add(nuevoServicio);
+
             return nuevoServicio;
         }
-
-        public double MostrarCosto(Reserva reserva)
+        
+        // Finaliza la estancia del cliente, libera la habitación y genera la facturación.        
+        public Facturacion FinalizarEstancia(Reserva reserva, Cliente cliente, HotelData data)
         {
-            if (reserva == null) return 0.0;
-            return reserva.GetCostoTotal();
+            if (reserva == null || reserva.GetEstadoR() != "Confirmada") return null;
+
+            // Cambiamos el estado de la reserva y liberamos la habitación.
+            reserva.ModificarEstado("Completada");
+            if (reserva.habitacion != null)
+            {
+                reserva.habitacion.GetEstado(EstadoHabitacion.Disponible);
+            }
+
+            // Calculamos los costos usando la clase Facturacion.
+            Facturacion nuevaFactura = Facturacion.CalcularCostos(reserva.habitacion, reserva.GetNumeroNoches(), data.serviciosAdicionales, cliente.nombre);
+
+            // Guardamos la factura en el sistema central.
+            data.facturas.Add(nuevaFactura);
+
+            // Limpiamos los servicios en memoria porque ya se cobraron.
+            data.serviciosAdicionales.Clear();
+
+            return nuevaFactura;
         }
-                       
+                        
+        // se genera una factura visual en consola con todos los detalles de la compra.       
+        public void ImprimirFactura(Facturacion factura, HotelData data)
+        {
+            if (factura == null) return;
+
+            // Generamos el número de factura basándonos en cuántas facturas existen.
+            int numeroFacturaAsignado = data.facturas.Count;
+
+            // Diseño de la UI de la factura en consola
+            Console.WriteLine("\n=======================================================");
+            Console.WriteLine("                  HOTEL - FACTURA OFICIAL              ");
+            Console.WriteLine("=======================================================");
+            Console.WriteLine($"N° FACTURA:   {numeroFacturaAsignado:D4}"); 
+            Console.WriteLine($"FECHA:        {factura.fechaFacturacion}");
+            Console.WriteLine($"CLIENTE:      {factura.nombreCliente}");
+            Console.WriteLine($"ATENDIDO POR: {this.nombre}"); // Polimorfismo: Usamos el atributo heredado de Usuario
+            Console.WriteLine("-------------------------------------------------------");
+                        
+            Console.WriteLine("                       DETALLE                         ");
+            Console.WriteLine("-------------------------------------------------------");
+                         
+            // mostramos el costo total directamente.
+            Console.WriteLine($"TOTAL A PAGAR:                      ${factura.costoTotal}");
+            Console.WriteLine("=======================================================\n");
+            Console.WriteLine("             ¡Gracias por su preferencia!              \n");
+        }
+                
+        // Busca a un cliente en la base de datos por su correo.        
+        public Cliente ConsultarInfoHuesped(string correoCliente, HotelData data)
+        {
+            if (string.IsNullOrEmpty(correoCliente)) return null;
+            
+            return data.clientes.FirstOrDefault(c => c.correoCliente == correoCliente);
+        }
     }
 }
+
