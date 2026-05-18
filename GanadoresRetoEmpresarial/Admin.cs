@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.Data;
 
 namespace GanadoresRetoEmpresarial
 {
@@ -15,8 +10,6 @@ namespace GanadoresRetoEmpresarial
             this.contraseña = contraseña;
         }
         // -----------------------------------------------------------------------------------------
-
-        // Recibe una habitación y un costo nuevo, y modifica el costo de la habitación con el nuevo valor.
         public void ModificarCosto(Habitacion h, double nuevoCosto)
         {
             h.SetPrecioNoche(nuevoCosto);
@@ -59,6 +52,8 @@ namespace GanadoresRetoEmpresarial
             foreach (KeyValuePair<int, List<Facturacion>> entry in facturasPorMes)
             {
                 Console.WriteLine($"Ingresos de Mes #{entry.Key}");
+
+                //Calcula ingresos del mes.
                 decimal d = CalcularIngresos(entry.Value);
                 Console.WriteLine("$" + d);
                 ingresosTotales += d;
@@ -69,12 +64,16 @@ namespace GanadoresRetoEmpresarial
                     mesPico = entry.Key;
                     ingresosPico = d;
                 }
+
+                //Determina el mes con menores ingresos.
                 if (d < ingresosValle)
                 {
                     mesValle = entry.Key;
                     ingresosValle = d;
                 }
             }
+
+            //Resumen final
             Console.WriteLine($"Mes con mayores ingresos: {mesPico} (${ingresosPico})");
             Console.WriteLine($"Mes con menores ingresos: {mesValle} (${ingresosValle})");
             Console.WriteLine($"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}");
@@ -92,6 +91,8 @@ namespace GanadoresRetoEmpresarial
             }
             return ingresosTotales;
         }
+
+        //Método para administrar promociones.
         public void GestionarPromociones(List<Promocion> promociones)
         {
             bool exit = false;
@@ -154,6 +155,8 @@ namespace GanadoresRetoEmpresarial
             }
 
         }
+
+        //Método privado encargado de crear una nueva promoción
         private Promocion? NuevaPromocion()
         {
             // Obtenemos datos.
@@ -173,16 +176,20 @@ namespace GanadoresRetoEmpresarial
             // Intentamos crear la promoción, y si ocurre un error de validación en el constructor, lo atrapamos e imprimimos el mensaje de error.
             try
             {
+                //Intenta crear la nueva promoción.
                 Promocion nuevaPromocion = new Promocion(nombre, descripcion, descuento, fechaInicio, fechaFin);
                 return nuevaPromocion;
 
             }
             catch (ArgumentException ex)
             {
+                //Captura errores de validación y muestra el mensaje correspondiente.
                 Console.WriteLine($"Error al crear la promoción: {ex.Message}");
                 return null;
             }
         }
+        
+        //Método privado para modificar una promoción existente.
         private void ModificarPromocion(Promocion p)
         {
             // Menú para elegir qué modificar.
@@ -212,11 +219,14 @@ namespace GanadoresRetoEmpresarial
                         fechaInicio = AskDate("Nueva fecha de inicio (dd/mm/yyyy):");
                         fechaFin = AskDate("Nueva fecha de fin (dd/mm/yyyy):");
 
+                        //Verifica que la fecha inicio no sea mayor que la fecha fin.
                         validDate = isValidPeriod(fechaInicio, fechaFin);
                         if (!validDate)
+                            //Mensaje de error si el periodo es inválido.
                             Console.WriteLine("Ingresa un periodo válido: el inicio no puede ser después de la fecha fin");
                         else
                         {
+                            //Actualiza el periodo de validez.
                             p.periodoValidez = (fechaInicio, fechaFin);
                             Console.WriteLine("Periodo de validez modificado exitosamente.");
                         }
@@ -234,11 +244,18 @@ namespace GanadoresRetoEmpresarial
             DateTime value;
             do
             {
+                //Muestra el mensaje recibido.
                 Console.Write(prompt);
+
+                //Intenta convertir el texto ingresado a DateTime.
                 if (!DateTime.TryParseExact(Console.ReadLine(), "yyyy-MM-dd",
                     null, System.Globalization.DateTimeStyles.None, out value))
+
+                    //Mensaje de error si el formato es incorrecto.
                     Console.WriteLine("  ⚠ Usa el formato yyyy-MM-dd.");
             } while (value == default);
+
+            //Retorna la fecha válida.
             return value;
         }
 
@@ -246,7 +263,11 @@ namespace GanadoresRetoEmpresarial
         public static int AskInt(string prompt)
         {
             int value;
+
+            //Muestra el mensaje recibido.
             Console.Write(prompt);
+
+            //Repite hasta ingresar un entero válido.
             while (!int.TryParse(Console.ReadLine(), out value))
             {
                 Console.WriteLine("  ⚠ Debe ser un número.");
@@ -260,17 +281,26 @@ namespace GanadoresRetoEmpresarial
             string? value;
             do
             {
+
+                //Muestra el mensaje.
                 Console.Write(prompt);
+
+                //Lee el texto y elimina espacios al inicio y final.
                 value = Console.ReadLine()?.Trim();
+
+                //Verifica si está vacío.
                 if (string.IsNullOrEmpty(value))
                     Console.WriteLine("  ⚠ Can't be empty, try again.");
             } while (string.IsNullOrEmpty(value));
+
+            //Retorna el texto válido.
             return value;
         }
 
         // Valida si el tiempo de inicio es anterior o igual al tiempo de fin. Retorna true si el periodo es válido, y false si no lo es.
         private bool isValidPeriod(DateTime start, DateTime end)
         {
+            //Retorna true si la fecha inicio es menor o igual a la fecha fin.
             return start <= end; // Puede ser un solo día.
         }
     
