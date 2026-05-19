@@ -4,6 +4,17 @@
     {
         static void Main(string[] args)
         {
+            // Folder Path para guardar datos.
+            // La primera linea obtiene el directorio del escritorio del usuario.
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            // La segunda linea combina el path del escritorio con el nombre de la carpeta donde se guardarán los datos, y luego crea esa carpeta.
+            string fullPath = Path.Combine(desktopPath, "VelisseHotelData");
+            Directory.CreateDirectory(fullPath);
+
+            //En caso de que ya exista la carpeta, CreateDirectory no hará nada y seguirá adelante, así que no hay riesgo de perder datos existentes.
+
+
             // Instanciamos datos y menús.
             var data = new HotelData();
             MenuCliente menuCliente = new MenuCliente();
@@ -36,7 +47,7 @@
             {
                 Console.Clear();
                 Console.WriteLine("=== Sistema de administración de Velisse Hotel ===");
-                string nombreUsuario = Admin.AskString("Ingresa tu nombre de usuario o 0 para salir:");
+                string nombreUsuario = AskTypes.AskString("Ingresa tu nombre de usuario o 0 para salir:");
 
 
                 // Si el usuario ingresa "0", se cierra el programa. running se vuelve false y se continúa al siguiente ciclo, que termina inmediatamente.
@@ -70,7 +81,7 @@
                 // Si el usuario se encontró, se pide su contraseña. Si es válida, se muestra el menú correspondiente pasando el usuario actual y los datos.
                 else
                 {
-                    string contraseña = Admin.AskString("Ingresa tu contraseña:");
+                    string contraseña = AskTypes.AskString("Ingresa tu contraseña:");
                     if (usuario.contraseña == contraseña)
                     {
                         switch (usuario)
