@@ -35,7 +35,7 @@ namespace GanadoresRetoEmpresarial
 
             // Para partir en meses, tomamos el mes de la primera y agrupamos todas las facturas que compartan ese mes en una nueva lista,
             // Al encontrarnos con una factura con un nuevo mes, la guardamos, terminamos de recorrer la lista y luego volvemos a buscar
-            // facturas qeu compartan mes con la nueva, agrupándolos en una nueva lista.
+            // facturas que compartan mes con la nueva, agrupándolos en una nueva lista.
             List<Facturacion> fInRange = allf.Where(f => f.fechaFacturacion >= fechaInicio && f.fechaFacturacion <= fechaFin).ToList();
             Dictionary<int, List<Facturacion>> facturasPorMes = fInRange.GroupBy(f => f.fechaFacturacion.Month).ToDictionary(g => g.Key, g => g.ToList());
 
@@ -211,11 +211,11 @@ namespace GanadoresRetoEmpresarial
                 Console.Write(prompt);
                 value = Console.ReadLine()?.Trim();
                 if (string.IsNullOrEmpty(value))
-                    Console.WriteLine("  ⚠ Can't be empty, try again.");
+                    Console.WriteLine("  ⚠ No puede estar vacío bb, vuelve a intentar.");
             } while (string.IsNullOrEmpty(value));
             return value;
         }
-        private bool isValidPeriod(DateTime start, DateTime end)
+        public static bool isValidPeriod(DateTime start, DateTime end)
         {
             return start <= end; // Puede ser un solo día.
         }

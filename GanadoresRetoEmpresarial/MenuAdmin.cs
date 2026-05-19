@@ -18,9 +18,9 @@ namespace GanadoresRetoEmpresarial
                     "\n [2] Gestionar promociones y tarifas especiales." +
                     "\n [3] Calcular ingresos." +
                     "\n [4] Generar reportes." +
-                    "\n [0] Salir del menú.");
+                    "\n [5] Salir del menú.");
 
-                int opcion = int.TryParse(Console.ReadLine(), out int op) ? op : 0;
+                int opcion = int.TryParse(Console.ReadLine(), out int op) ? op : 5;
 
                 switch (opcion)
                 {
@@ -38,7 +38,7 @@ namespace GanadoresRetoEmpresarial
 
                         Console.WriteLine("Nuevo precio:");
                         double nuevoPrecio;
-                        if (double.TryParse(Console.ReadLine(), out double precio) && precio >= 0)
+                        if (double.TryParse(Console.ReadLine(), out double precio) && precio >= habitacionSeleccionada.precioNoche)
                         {
                             nuevoPrecio = precio;
                         }
@@ -59,7 +59,7 @@ namespace GanadoresRetoEmpresarial
                     case 4:
                         a.GenerarReporte(data.facturas);
                         break;
-                    case 0:
+                    case 5:
                         salir = true;
                         break;
                     default:
