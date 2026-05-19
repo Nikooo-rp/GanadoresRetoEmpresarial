@@ -14,5 +14,7 @@ namespace GanadoresRetoEmpresarial
         public List<Promocion> promociones = new List<Promocion>();
         public List<ServicioAdicional> serviciosAdicionales = new List<ServicioAdicional>();
 
+        public int numFactura = 0;
+
     }
 }

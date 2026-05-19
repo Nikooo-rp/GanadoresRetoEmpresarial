@@ -14,11 +14,5 @@ namespace GanadoresRetoEmpresarial
             this.nombre = nombre;
             this.contraseña = contraseña;
         }
-
-        public string ConsultarDisponibilidad(Habitacion h) 
-        {
-            return h.EstaDisponible() ? "Disponible" : "No disponible";
-        }
-
     }
 }

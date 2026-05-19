@@ -9,15 +9,9 @@ namespace GanadoresRetoEmpresarial
 {
     public class Admin : Usuario
     {
-        string idAdmin = string.Empty;
 
-        public List<Habitacion> habitaciones;
-        public List<Promocion> promocions;
-        public List<Facturacion> facturacions;
-
-        public Admin(string idAdmin, string nombre, string contraseña) : base(nombre, contraseña)
+        public Admin(string nombre, string contraseña) : base(nombre, contraseña)
         {
-            this.idAdmin = idAdmin;
             this.nombre = nombre;
             this.contraseña = contraseña;
         }
@@ -89,7 +83,7 @@ namespace GanadoresRetoEmpresarial
                 Console.WriteLine("Lista de promociones actuales:");
                 for (int i = 0; i < promociones.Count; i++)
                 {
-                    Console.WriteLine($"{i + 1}. {promociones[i].nombre} - {promociones[i].descripcion} - Descuento: {promociones[i].descuento}% - Validez: {promociones[i].periodoValidez.Item1.ToShortDateString()} a {promociones[i].periodoValidez.Item2.ToShortDateString()}");
+                    Console.WriteLine($"{i + 1}. {promociones[i].nombre} - {promociones[i].descripcion} - Descuento: {promociones[i].Descuento}% - Validez: {promociones[i].periodoValidez.Item1.ToShortDateString()} a {promociones[i].periodoValidez.Item2.ToShortDateString()}");
                 }
             }
             Console.WriteLine("------------------------------------------------------------------------------------------");
@@ -103,6 +97,7 @@ namespace GanadoresRetoEmpresarial
                         promociones.Add(nuevaPromocion);
                         Console.WriteLine("Promoción agregada exitosamente.");
                     }
+                    Console.ReadLine();
                     break;
                 case 2:
                     Console.WriteLine();
@@ -130,21 +125,29 @@ namespace GanadoresRetoEmpresarial
             decimal descuento = (decimal)AskInt("Descuento de la promoción (sin el %):");
             DateTime fechaInicio = AskDate("Fecha de inicio de la promoción (dd/mm/yyyy):");
             DateTime fechaFin = AskDate("Fecha de fin de la promoción (dd/mm/yyyy):");
-            try
-            {
-                Promocion nuevaPromocion = new Promocion(nombre, descripcion, descuento, fechaInicio, fechaFin);
-                return nuevaPromocion;
 
-            }
-            catch (ArgumentException ex)
+            if (isValidPeriod(fechaInicio, fechaFin))
             {
-                Console.WriteLine($"Error al crear la promoción: {ex.Message}");
+                try
+                {
+                    Promocion nuevaPromocion = new Promocion(nombre, descripcion, descuento, fechaInicio, fechaFin);
+                    return nuevaPromocion;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Error al crear la promoción: {ex.Message}");
+                    return null;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Periodo de validez incorrecto.");
                 return null;
             }
         }
         private void ModificarPromocion(Promocion p)
         {
-            string rta = AskString("1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez");
+            string rta = AskString("1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez \n 0. Volver");
             switch (rta)
             {
                 case "1":
@@ -156,7 +159,7 @@ namespace GanadoresRetoEmpresarial
                     Console.WriteLine("Descripción modificada exitosamente.");
                     break;
                 case "3":
-                    p.descuento = (decimal)AskInt("Nuevo descuento (sin el %):");
+                    p.Descuento = (decimal)AskInt("Nuevo descuento (sin el %):");
                     Console.WriteLine("Descuento modificado exitosamente.");
                     break;
                 case "4":
@@ -178,6 +181,10 @@ namespace GanadoresRetoEmpresarial
                         }
                     }
                     break;
+                case "0":
+                    break;
+                default:
+                    Console.WriteLine("Ingresa un número válido"); break;
             }
         }
         public static DateTime AskDate(string prompt)
