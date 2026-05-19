@@ -110,7 +110,7 @@ namespace GanadoresRetoEmpresarial
                     Console.Write("Ingrese la fecha de salida (dd/mm/yyyy): ");
                     if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaSalida))
                     {
-                        if (fechaSalida > fechaEntrada)
+                        if (Admin.isValidPeriod(fechaEntrada, fechaSalida))
                         {
                             // Verificar disponibilidad de fechas
                             if (VerificarDisponibilidadFechas(habitacionSeleccionada, fechaEntrada, fechaSalida))
