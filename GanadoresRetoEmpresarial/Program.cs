@@ -14,7 +14,7 @@
 
             //En caso de que ya exista la carpeta, CreateDirectory no hará nada y seguirá adelante, así que no hay riesgo de perder datos existentes.
 
-
+            SaveManager.LoadData(fullPath);
             // Instanciamos datos y menús.
             var data = new HotelData();
             MenuCliente menuCliente = new MenuCliente();
@@ -106,6 +106,7 @@
                     }
                 }
             }
+            SaveManager.SaveData(data, fullPath);
             Console.WriteLine("Adiós!");
         }
     }
