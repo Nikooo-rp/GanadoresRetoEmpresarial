@@ -2,19 +2,20 @@
 {
     internal class Program
     {
+        // Folder Path para guardar datos.
+        // La primera linea obtiene el directorio del escritorio del usuario.
+        public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        public static string fullPath = Path.Combine(desktopPath, "VelisseHotelData");
+
+        // La segunda linea combina el path del escritorio con el nombre de la carpeta donde se guardarán los datos, y luego crea esa carpeta.
         static void Main(string[] args)
         {
-            // Folder Path para guardar datos.
-            // La primera linea obtiene el directorio del escritorio del usuario.
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-            // La segunda linea combina el path del escritorio con el nombre de la carpeta donde se guardarán los datos, y luego crea esa carpeta.
-            string fullPath = Path.Combine(desktopPath, "VelisseHotelData");
             Directory.CreateDirectory(fullPath);
-
             //En caso de que ya exista la carpeta, CreateDirectory no hará nada y seguirá adelante, así que no hay riesgo de perder datos existentes.
 
+            // Cargamos datos guardados, si es que existen. Si no, se crea un nuevo objeto HotelData vacío.
             SaveManager.LoadData(fullPath);
+
             // Instanciamos datos y menús.
             var data = new HotelData();
             MenuCliente menuCliente = new MenuCliente();
@@ -106,6 +107,7 @@
                     }
                 }
             }
+            // Guardamos los datos al salir del programa. Se llama a SaveData pasando el objeto data y el path donde se guardará.
             SaveManager.SaveData(data, fullPath);
             Console.WriteLine("Adiós!");
         }

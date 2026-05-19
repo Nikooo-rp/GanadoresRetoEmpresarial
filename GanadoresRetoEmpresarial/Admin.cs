@@ -73,10 +73,19 @@ namespace GanadoresRetoEmpresarial
                     ingresosValle = d;
                 }
             }
-            Console.WriteLine($"Mes con mayores ingresos: {mesPico} (${ingresosPico})");
-            Console.WriteLine($"Mes con menores ingresos: {mesValle} (${ingresosValle})");
-            Console.WriteLine($"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}");
-            Console.WriteLine(ingresosTotales);
+            string mesPicoNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesPico);
+            string mesValleNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesValle);
+            string reporte = "";
+            reporte += $"Mes con mayores ingresos: {mesPicoNombre} (${ingresosPico})\n";
+            reporte += $"Mes con menores ingresos: {mesValleNombre} (${ingresosValle})\n";
+            reporte += $"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}\n";
+            reporte += $"{ingresosTotales}\n";
+            Console.WriteLine("------------------------------------------------------------------------------------------");
+            string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)");
+            if (respuesta.ToLower() == "s")
+            {
+                ImprimirReporte(reporte);
+            }
         }
 
         // Calcular ingresos recorre la lista entregada de factura y suma el costo total de cada una a un decimal que luego devuelve.
@@ -89,7 +98,26 @@ namespace GanadoresRetoEmpresarial
             }
             return ingresosTotales;
         }
+        // Imprimir reporte recibe un string con el reporte formateado, luego crea una carpeta llamada "Reportes" dentro de la carpeta principal del programa (si no existe) y guarda el reporte en un archivo de texto con un nombre que incluye un timestamp para evitar sobreescrituras.
+        private void ImprimirReporte(string reporte)
+        {
+            string pathReportes = Path.Combine(Program.fullPath, "Reportes");
+            Directory.CreateDirectory(pathReportes);
 
+            // Lo ponemos dentro de un try catch para manejar cualquier error que pueda surgir al escribir el archivo, como problemas de permisos o espacio en disco insuficiente.
+            try
+            {
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                StreamWriter sw = new StreamWriter(Path.Combine(pathReportes, $"reporte_{timestamp}.txt"));
+                sw.WriteLine(reporte);
+                sw.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al imprimir el reporte: {ex.Message}");
+            }
+        }
         // Submenú de gestión de promociones.
         public void GestionarPromociones(List<Promocion> promociones)
         {
