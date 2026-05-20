@@ -88,18 +88,21 @@ namespace GanadoresRetoEmpresarial
                     ingresosValle = d;
                 }
             }
+            // CultureInfo.CurrentCulture..... devuelve el nombre del mes correspondiente al número que le entregas dentro de la cultura actual del sistema, por ejemplo, si el número es 1, devolverá "Enero" en una cultura en español o "January" en una cultura en inglés.
             string mesPicoNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesPico);
             string mesValleNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesValle);
 
+            // Iniciamos el strinng del reporte, queremos guardarlo para imprimirlo en caso de que el usuario lo desee.
             string reporte = "";
 
+            // Añadimos cada parte del reporte al string, incluyendo encabezados, ingresos totales y meses pico y valle. Se utilizan líneas de separación para mejorar la legibilidad del reporte.
             reporte += "-----------------------------REPORTE DE INGRESOS-----------------------------\n";
             reporte += $"Reporte generado el {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\n";
             reporte += "------------------------------------------------------------------------------------------\n";
             reporte += $"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}\n";
             reporte += $"{ingresosTotales}\n";
 
-            // si son iguales, quiere decir que solo hay un mes. En ese caso, no tiene sentido mostrar un mes pico y valle, ya que serían el mismo mes, por lo que solo se muestra el mes pico (que es el mismo que el valle).
+            // Si son iguales, quiere decir que solo hay un mes. En ese caso, no tiene sentido mostrar un mes pico y valle, ya que serían el mismo mes, por lo que solo se muestra el mes pico (que es el mismo que el valle).
             if (mesPico != mesValle)
             {
                 reporte += "------------------------------------------------------------------------------------------\n";
@@ -108,7 +111,10 @@ namespace GanadoresRetoEmpresarial
                 reporte += "------------------------------------------------------------------------------------------\n";
             }
 
+            // Esta parte escribe el reporte en consola.
             Console.WriteLine(reporte);
+
+            // Finalizamos con el prompt para imprimir el reporte.
             string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)");
             if (respuesta.ToLower() == "s")
             {
@@ -126,7 +132,7 @@ namespace GanadoresRetoEmpresarial
             }
             return ingresosTotales;
         }
-        // Imprimir reporte recibe un string con el reporte formateado, luego crea una carpeta llamada "Reportes" dentro de la carpeta principal del programa (si no existe) y guarda el reporte en un archivo de texto con un nombre que incluye un timestamp para evitar sobreescrituras.
+        // Imprimir reporte recibe un string con el reporte formateado, luego crea una carpeta llamada "Reportes" dentro de la carpeta principal del programa (si no existe) y guarda el reporte en un archivo de texto con un nombre que incluye el periodo de tiempo del reporte.
         private void ImprimirReporte(string reporte, DateTime inicio, DateTime fin)
         {
             string pathReportes = Path.Combine(Program.fullPath, "Reportes");
@@ -137,7 +143,14 @@ namespace GanadoresRetoEmpresarial
             {
                 string inicioString = inicio.ToString("yyyy-MM-dd");
                 string finString = fin.ToString("yyyy-MM-dd");
-                StreamWriter sw = new StreamWriter(Path.Combine(pathReportes, $"reporte_{inicioString}_a_{finString}.txt"));
+                string fileName = $"reporte_{inicioString}_a_{finString}.txt";
+                if (File.Exists(Path.Combine(pathReportes, fileName)))
+                {
+                    // Si el archivo ya existe, le añadimos un timestamp al nombre para evitar sobreescrituras.
+                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    fileName = $"reporte_{inicioString}_a_{finString}_({timestamp}).txt";
+                }
+                StreamWriter sw = new StreamWriter(Path.Combine(pathReportes, fileName));
                 sw.WriteLine(reporte);
                 sw.Close();
 
