@@ -100,7 +100,7 @@ namespace GanadoresRetoEmpresarial
             reporte += $"Reporte generado el {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\n";
             reporte += "------------------------------------------------------------------------------------------\n";
             reporte += $"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}\n";
-            reporte += $"{ingresosTotales}\n";
+            reporte += $"${ingresosTotales}\n";
 
             // Si son iguales, quiere decir que solo hay un mes. En ese caso, no tiene sentido mostrar un mes pico y valle, ya que serían el mismo mes, por lo que solo se muestra el mes pico (que es el mismo que el valle).
             if (mesPico != mesValle)
@@ -115,10 +115,14 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine(reporte);
 
             // Finalizamos con el prompt para imprimir el reporte.
-            string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)");
+            string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)\n");
             if (respuesta.ToLower() == "s")
             {
                 ImprimirReporte(reporte, fechaInicio, fechaFin);
+            }
+            if(respuesta.ToLower() == "n")
+            {
+                return;
             }
         }
 
@@ -130,6 +134,8 @@ namespace GanadoresRetoEmpresarial
             {
                 ingresosTotales += (decimal)factura.costoTotal;
             }
+            Console.WriteLine($"Los ingresos han sido {ingresosTotales}$");
+            Console.ReadKey();
             return ingresosTotales;
         }
         // Imprimir reporte recibe un string con el reporte formateado, luego crea una carpeta llamada "Reportes" dentro de la carpeta principal del programa (si no existe) y guarda el reporte en un archivo de texto con un nombre que incluye el periodo de tiempo del reporte.
@@ -176,11 +182,11 @@ namespace GanadoresRetoEmpresarial
                     for (int i = 0; i < promociones.Count; i++)
                     {
                         // Imprime la lista de promociones con índice base 1, es decir, empieza en 1 en vez de 0 para que sea más intuitivo para el usuario.
-                        Console.WriteLine($"{i + 1}. {promociones[i].nombre} - {promociones[i].descripcion} - Descuento: {promociones[i].Descuento}% - Validez: {promociones[i].periodoValidez.Item1.ToShortDateString()} a {promociones[i].periodoValidez.Item2.ToShortDateString()}");
+                        Console.WriteLine($"[{i + 1}] {promociones[i].nombre} - {promociones[i].descripcion} - Descuento: {promociones[i].Descuento}% - Validez: {promociones[i].periodoValidez.Item1.ToShortDateString()} a {promociones[i].periodoValidez.Item2.ToShortDateString()}");
                     }
                 }
                 Console.WriteLine("------------------------------------------------------------------------------------------");
-                int opcion = AskTypes.AskInt("¿Que quieres hacer?\n 1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 0. Salir \n");
+                int opcion = AskTypes.AskInt("¿Que quieres hacer?\n[1] Agregar nueva promoción \n[2] Modificar promoción existente \n[3] Eliminar promoción \n[0] Cancelar \n");
                 switch (opcion)
                 {
                     case 1:
@@ -196,7 +202,7 @@ namespace GanadoresRetoEmpresarial
                     // Casos 2 y 3 restan 1 al número ingresado por el usuario para obtener el índice correcto. Recordando que anteriormente se le enseñaron los índices ajustados a base 1, pero los necesitamos en base 0 para evitar errores de rango.
                     case 2:
                         Console.WriteLine();
-                        int numPromocion = AskTypes.AskInt("Ingresa el número de la promoción a modificar:");
+                        int numPromocion = AskTypes.AskInt("Ingresa el número de la promoción a modificar: ");
                         if (ModificarPromocion(promociones[numPromocion - 1]))
                         {
                             Console.WriteLine("Promoción modificada exitosamente.");
@@ -208,7 +214,7 @@ namespace GanadoresRetoEmpresarial
                         Console.ReadLine();
                         break;
                     case 3:
-                        int numPromocionEliminar = AskTypes.AskInt("Ingresa el número de la promoción a eliminar:");
+                        int numPromocionEliminar = AskTypes.AskInt("Ingresa el número de la promoción a eliminar: ");
                         try
                         {
                             promociones.RemoveAt(numPromocionEliminar - 1);
@@ -244,11 +250,11 @@ namespace GanadoresRetoEmpresarial
         private Promocion? NuevaPromocion()
         {
             // Obtención de datos. El método AskString y AskInt se encargan de validar que el usuario ingrese un string no vacío o un número respectivamente, por lo que no es necesario agregar validaciones adicionales para esos casos.
-            string nombre = AskTypes.AskString("Nombre de la promoción:");
-            string descripcion = AskTypes.AskString("Descripción de la promoción:");
-            decimal descuento = (decimal)AskTypes.AskInt("Descuento de la promoción (de 0 a 100 sin el %):");
-            DateTime fechaInicio = AskTypes.AskDate("Fecha de inicio de la promoción (yyyy/mm/dd):");
-            DateTime fechaFin = AskTypes.AskDate("Fecha de fin de la promoción (yyyy/mm/dd):");
+            string nombre = AskTypes.AskString("Nombre de la promoción: ");
+            string descripcion = AskTypes.AskString("Descripción de la promoción: ");
+            decimal descuento = (decimal)AskTypes.AskInt("Descuento de la promoción (de 0 a 100 sin el %): ");
+            DateTime fechaInicio = AskTypes.AskDate("Fecha de inicio de la promoción (yyyy-mm-dd): ");
+            DateTime fechaFin = AskTypes.AskDate("Fecha de fin de la promoción (yyyy-mm-dd): ");
             if (isValidPeriod(fechaInicio, fechaFin))
             {
                 try
@@ -271,27 +277,27 @@ namespace GanadoresRetoEmpresarial
         private bool ModificarPromocion(Promocion p)
         {
             // Retorna verdadero si se logró la operación, falso de lo contrario. Esto se utiliza para mostrar un mensaje de éxito o error al usuario dependiendo del resultado.
-            string rta = AskTypes.AskString(" 1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez \n 0. Volver");
+            string rta = AskTypes.AskString("¿Qué vas a modificar? \n[1] Modificar nombre \n[2] Modificar descripción \n[3] Modificar descuento \n[4] Modificar periodo de validez \n[0] Volver\n");
             switch (rta)
             {
                 case "1":
-                    p.nombre = AskTypes.AskString("Nuevo nombre:");
+                    p.nombre = AskTypes.AskString("Nuevo nombre: ");
                     Console.WriteLine("Nombre modificado exitosamente.");
                     return true;
                 case "2":
-                    p.descripcion = AskTypes.AskString("Nueva descripción:");
+                    p.descripcion = AskTypes.AskString("Nueva descripción: ");
                     Console.WriteLine("Descripción modificada exitosamente.");
                     return true;
                 case "3":
-                    p.Descuento = (decimal)AskTypes.AskInt("Nuevo descuento (de 0 a 100 sin el %):");
+                    p.Descuento = (decimal)AskTypes.AskInt("Nuevo descuento (de 0 a 100 sin el %): ");
                     Console.WriteLine("Descuento modificado exitosamente.");
                     return true;
                 case "4":
                     DateTime fechaInicio;
                     DateTime fechaFin;
 
-                    fechaInicio = AskTypes.AskDate("Nueva fecha de inicio (yyyy/mm/dd):");
-                    fechaFin = AskTypes.AskDate("Nueva fecha de fin (yyyy/mm/dd):");
+                    fechaInicio = AskTypes.AskDate("Nueva fecha de inicio (yyyy-mm-dd): ");
+                    fechaFin = AskTypes.AskDate("Nueva fecha de fin (yyyy-mm-dd): ");
 
                     if (!isValidPeriod(fechaInicio, fechaFin))
                     {

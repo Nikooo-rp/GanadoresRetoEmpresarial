@@ -38,7 +38,7 @@ namespace GanadoresRetoEmpresarial
                 Console.Write(prompt);
                 value = Console.ReadLine()?.Trim();
                 if (string.IsNullOrEmpty(value))
-                    Console.WriteLine("No puede estar vacío bb, vuelve a intentar.");
+                    Console.WriteLine("No puede dejarlo vacío.");
             } while (string.IsNullOrEmpty(value));
             return value;
         }

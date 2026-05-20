@@ -19,25 +19,23 @@ namespace GanadoresRetoEmpresarial
                 Console.WriteLine("======================================");
                 Console.WriteLine($"Recepcionista en turno: {recepcionistaActual.nombre}");
                 Console.WriteLine("--------------------------------------");
-                Console.WriteLine("1. Registrar nuevo Cliente");
-                Console.WriteLine("2. Ver disponibilidad de Habitaciones");
-                Console.WriteLine("3. Crear nueva Reserva");
-                Console.WriteLine("4. Agregar Servicio Adicional con Descripción");
-                Console.WriteLine("5. Procesar Check-out e Imprimir Factura");
-                Console.WriteLine("6. Regresar al Menú Principal");
+                Console.WriteLine("[1] Registrar nuevo cliente");
+                Console.WriteLine("[2] Ver disponibilidad de habitaciones");
+                Console.WriteLine("[3] Crear nueva reserva");
+                Console.WriteLine("[4] Agregar servicios adicionales");
+                Console.WriteLine("[5] Procesar check-out e imprimir factura");
+                Console.WriteLine("[0] Cerrar sesión");
                 Console.WriteLine("======================================");
-                Console.Write("Seleccione una operación: ");
+                string opcion = AskTypes.AskString("Seleccione una operación: ");
 
-                string opcion = Console.ReadLine();
                 Console.WriteLine();
 
                 switch (opcion)
                 {
                     case "1":
-                        Console.Write("Nombre del cliente: ");
-                        string nombre = Console.ReadLine();
-                        Console.Write("Correo del cliente (Servirá como identificador): ");
-                        string correo = Console.ReadLine();
+                        string nombre = AskTypes.AskString("Nombre del cliente: ");
+                        
+                        string correo = AskTypes.AskString("Correo del cliente (Servirá como identificador): ");
 
                         // Delegamos la creación y el guardado directamente a HotelData
                         Cliente nuevoCliente = new Cliente(correo, nombre, "password_generico");
@@ -55,21 +53,26 @@ namespace GanadoresRetoEmpresarial
                         break;
 
                     case "3":
-                        Console.Write("Ingrese el correo del cliente: ");
-                        string correoBusqueda = Console.ReadLine();
+                        string correoBusqueda = AskTypes.AskString("Ingrese el correo del cliente: ");                      
 
                         // Recepcionista busca la info en la base de datos
                         Cliente clienteReserva = recepcionistaActual.ConsultarInfoHuesped(correoBusqueda, data);
 
                         if (clienteReserva != null)
                         {
+                            Console.WriteLine("--- HABITACIONES DEL HOTEL DISPONIBLES ---");
+                            foreach (Habitacion h in data.habitaciones)
+                            {
+                                if(h.EstaDisponible())
+                                Console.WriteLine(h.ToString());
+                            }
                             Console.Write("Ingrese el número de la habitación: ");
                             if (int.TryParse(Console.ReadLine(), out int numHabitacion))
                             {
                                 // Buscamos la referencia exacta de la habitación en HotelData
-                                Habitacion habSeleccionada = data.habitaciones.Find(h => h.numero == numHabitacion);
+                                Habitacion? habSeleccionada = data.habitaciones.Find(h => h.numero == numHabitacion);
 
-                                if (habSeleccionada != null)
+                                if (habSeleccionada != null && habSeleccionada.EstaDisponible())
                                 {
                                     Console.Write("Ingrese cantidad de noches: ");
                                     if (int.TryParse(Console.ReadLine(), out int noches))
@@ -85,7 +88,7 @@ namespace GanadoresRetoEmpresarial
                                 }
                                 else
                                 {
-                                    Console.WriteLine("[ERROR] Número de habitación inexistente.");
+                                    Console.WriteLine("[ERROR] Número de habitación inexistente u ocupada.");
                                 }
                             }
                         }
@@ -96,18 +99,18 @@ namespace GanadoresRetoEmpresarial
                         break;
 
                     case "4":
-                        Console.Write("Correo del cliente: ");
-                        string correoServ = Console.ReadLine();
+                        string correoServ = AskTypes.AskString("Correo del cliente: ");
+                        
                         Cliente clienteEncontrado = recepcionistaActual.ConsultarInfoHuesped(correoServ, data);
 
                         if (clienteEncontrado != null)
                         {
-                            Console.Write("Tipo de servicio (Ej. Restaurante, Lavandería): ");
-                            string tipoSrv = Console.ReadLine();
+                            string tipoSrv = AskTypes.AskString("Tipo de servicio (Ej. Restaurante, Lavandería): ");
+                            
 
                             // Implementación de la descripción del servicio
-                            Console.Write("Descripción detallada del servicio (Ej. Desayuno Continental a la habitación): ");
-                            string descSrv = Console.ReadLine();
+                            string descSrv = AskTypes.AskString("Descripción detallada del servicio (Ej. Desayuno Continental a la habitación): ");
+                            
 
                             Console.Write("Costo del servicio: ");
                             if (double.TryParse(Console.ReadLine(), out double precioSrv))
@@ -119,6 +122,7 @@ namespace GanadoresRetoEmpresarial
                             else
                             {
                                 Console.WriteLine("[ERROR] Costo inválido.");
+                                return;
                             }
                         }
                         else
@@ -128,15 +132,14 @@ namespace GanadoresRetoEmpresarial
                         break;
 
                     case "5":
-                        Console.Write("Correo del cliente para Check-out: ");
-                        string correoOut = Console.ReadLine();
+                        string correoOut = AskTypes.AskString("Correo del cliente para Check-out: ");
                         Cliente clienteOut = recepcionistaActual.ConsultarInfoHuesped(correoOut, data);
 
                         // Verificamos que el cliente exista y tenga reservas activas en su lista
                         if (clienteOut != null && clienteOut.reservasCliente.Count > 0)
                         {
                             // Tomamos la primera reserva activa 
-                            Reserva resCierre = clienteOut.reservasCliente.FirstOrDefault(r => r.GetEstadoR() == "Confirmada");
+                            Reserva? resCierre = clienteOut.reservasCliente.FirstOrDefault(r => r.GetEstadoR() == "Confirmada");
 
                             if (resCierre != null)
                             {
@@ -160,9 +163,10 @@ namespace GanadoresRetoEmpresarial
                         }
                         break;
 
-                    case "6":
+                    case "0":
                         sesionActiva = false;
                         Console.WriteLine("Cerrando sesión. Saliendo del Módulo de Recepción...");
+                        Console.ReadKey();
                         break;
 
                     default:
