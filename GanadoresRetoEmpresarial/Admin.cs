@@ -25,6 +25,13 @@ namespace GanadoresRetoEmpresarial
         }
         public void GenerarReporte(List<Facturacion> allf)
         {
+            // Check si hay facturas en la lista para evitar errores.
+            if (allf.Count == 0)
+            {
+                Console.WriteLine("No hay facturas registradas para generar un reporte.");
+                Console.ReadLine();
+                return;
+            }
             // El siguiente bloque pide al usuario una fecha de inicio y fin para el reporte hasta que ingrese un periodo válido (inicio antes o el mismo día que el final).
             DateTime fechaInicio;
             DateTime fechaFin;
@@ -38,6 +45,14 @@ namespace GanadoresRetoEmpresarial
 
             // Primero tomamos todas las facturas dentro del periodo de tiempo establecido por el usuario, filtrando la lista de facturas completa.
             List<Facturacion> fInRange = allf.Where(f => f.fechaFacturacion >= fechaInicio && f.fechaFacturacion <= fechaFin).ToList();
+
+            // Check de si hay facturas en el periodo de tiempo seleccionado para evitar errores.
+            if (fInRange.Count == 0)
+            {
+                Console.WriteLine("No hay facturas dentro del periodo de tiempo seleccionado para generar un reporte.");
+                Console.ReadLine();
+                return;
+            }
 
             //Luego, agrupamos las facturas por mes usando GroupBy y ToDictionary para crear un diccionario donde la clave es el número del mes y el valor es la lista de facturas de ese mes.
 
@@ -84,7 +99,8 @@ namespace GanadoresRetoEmpresarial
             string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)");
             if (respuesta.ToLower() == "s")
             {
-                ImprimirReporte(reporte);
+                reporte += $"Reporte generado el {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
+                ImprimirReporte(reporte, fechaInicio, fechaFin);
             }
         }
 
@@ -99,7 +115,7 @@ namespace GanadoresRetoEmpresarial
             return ingresosTotales;
         }
         // Imprimir reporte recibe un string con el reporte formateado, luego crea una carpeta llamada "Reportes" dentro de la carpeta principal del programa (si no existe) y guarda el reporte en un archivo de texto con un nombre que incluye un timestamp para evitar sobreescrituras.
-        private void ImprimirReporte(string reporte)
+        private void ImprimirReporte(string reporte, DateTime inicio, DateTime fin)
         {
             string pathReportes = Path.Combine(Program.fullPath, "Reportes");
             Directory.CreateDirectory(pathReportes);
@@ -107,8 +123,9 @@ namespace GanadoresRetoEmpresarial
             // Lo ponemos dentro de un try catch para manejar cualquier error que pueda surgir al escribir el archivo, como problemas de permisos o espacio en disco insuficiente.
             try
             {
-                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                StreamWriter sw = new StreamWriter(Path.Combine(pathReportes, $"reporte_{timestamp}.txt"));
+                string inicioString = inicio.ToString("yyyy-MM-dd");
+                string finString = fin.ToString("yyyy-MM-dd");
+                StreamWriter sw = new StreamWriter(Path.Combine(pathReportes, $"reporte_{inicioString}_a_{finString}.txt"));
                 sw.WriteLine(reporte);
                 sw.Close();
 
@@ -138,7 +155,7 @@ namespace GanadoresRetoEmpresarial
                     }
                 }
                 Console.WriteLine("------------------------------------------------------------------------------------------");
-                int opcion = AskTypes.AskInt("1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 0. Salir");
+                int opcion = AskTypes.AskInt(" 1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 0. Salir");
                 switch (opcion)
                 {
                     case 1:
@@ -205,8 +222,8 @@ namespace GanadoresRetoEmpresarial
             string nombre = AskTypes.AskString("Nombre de la promoción:");
             string descripcion = AskTypes.AskString("Descripción de la promoción:");
             decimal descuento = (decimal)AskTypes.AskInt("Descuento de la promoción (de 0 a 100 sin el %):");
-            DateTime fechaInicio = AskTypes.AskDate("Fecha de inicio de la promoción (dd/mm/yyyy):");
-            DateTime fechaFin = AskTypes.AskDate("Fecha de fin de la promoción (dd/mm/yyyy):");
+            DateTime fechaInicio = AskTypes.AskDate("Fecha de inicio de la promoción (yyyy/mm/dd):");
+            DateTime fechaFin = AskTypes.AskDate("Fecha de fin de la promoción (yyyy/mm/dd):");
             if (isValidPeriod(fechaInicio, fechaFin))
             {
                 try
@@ -229,7 +246,7 @@ namespace GanadoresRetoEmpresarial
         private bool ModificarPromocion(Promocion p)
         {
             // Retorna verdadero si se logró la operación, falso de lo contrario. Esto se utiliza para mostrar un mensaje de éxito o error al usuario dependiendo del resultado.
-            string rta = AskTypes.AskString("1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez \n 0. Volver");
+            string rta = AskTypes.AskString(" 1. Modificar nombre \n 2. Modificar descripción \n 3. Modificar descuento \n 4. Modificar periodo de validez \n 0. Volver");
             switch (rta)
             {
                 case "1":
@@ -248,8 +265,8 @@ namespace GanadoresRetoEmpresarial
                     DateTime fechaInicio;
                     DateTime fechaFin;
 
-                    fechaInicio = AskTypes.AskDate("Nueva fecha de inicio (dd/mm/yyyy):");
-                    fechaFin = AskTypes.AskDate("Nueva fecha de fin (dd/mm/yyyy):");
+                    fechaInicio = AskTypes.AskDate("Nueva fecha de inicio (yyyy/mm/dd):");
+                    fechaFin = AskTypes.AskDate("Nueva fecha de fin (yyyy/mm/dd):");
 
                     if (!isValidPeriod(fechaInicio, fechaFin))
                     {

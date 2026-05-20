@@ -12,9 +12,10 @@ namespace GanadoresRetoEmpresarial
 
             while (!salir)
             {
+                Console.Clear();
                 Console.WriteLine("Bienvenido al menú del admin");
                 Console.WriteLine("¿Qué quieres hacer");
-                Console.WriteLine("[1] Modificar el costo de una habitacion." +
+                Console.WriteLine("  [1] Modificar el costo de una habitacion." +
                     "\n [2] Gestionar promociones y tarifas especiales." +
                     "\n [3] Calcular ingresos." +
                     "\n [4] Generar reportes." +

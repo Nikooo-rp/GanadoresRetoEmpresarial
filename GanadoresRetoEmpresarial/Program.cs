@@ -6,6 +6,7 @@
         // La primera linea obtiene el directorio del escritorio del usuario.
         public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string fullPath = Path.Combine(desktopPath, "VelisseHotelData");
+        public static string filePath = Path.Combine(fullPath, "hotelData.json");
 
         // La segunda linea combina el path del escritorio con el nombre de la carpeta donde se guardarán los datos, y luego crea esa carpeta.
         static void Main(string[] args)
@@ -14,7 +15,7 @@
             //En caso de que ya exista la carpeta, CreateDirectory no hará nada y seguirá adelante, así que no hay riesgo de perder datos existentes.
 
             // Cargamos datos guardados, si es que existen. Si no, se crea un nuevo objeto HotelData vacío.
-            SaveManager.LoadData(fullPath);
+            SaveManager.LoadData(filePath);
 
             // Instanciamos datos y menús.
             var data = new HotelData();
@@ -22,25 +23,29 @@
             MenuAdmin menuAdmin = new MenuAdmin();
 
             // Base de datos inicial de usuarios y habitaciones.
-            data.admins.AddRange(new List<Admin>
+            // Check para evitar sobreescribir datos existentes. Solo se llenarán las listas si están vacías, lo que solo ocurrirá la primera vez que se ejecute el programa sin datos guardados.
+            if (data.admins.Count == 0 && data.recepcionistas.Count == 0 && data.habitaciones.Count == 0)
             {
-                new Admin("admin1", "adpass1"),
-                new Admin("admin2", "adpass2")
-            });
+                    data.admins.AddRange(new List<Admin>
+                {
+                    new Admin("admin1", "adpass1"),
+                    new Admin("admin2", "adpass2")
+                });
 
-            data.recepcionistas.AddRange(new List<Recepcionista>
-            {
-                new Recepcionista("recep1", "repass1"),
-                new Recepcionista("recep2", "repass2")
-            });
+                    data.recepcionistas.AddRange(new List<Recepcionista>
+                {
+                    new Recepcionista("recep1", "repass1"),
+                    new Recepcionista("recep2", "repass2")
+                });
 
-            data.habitaciones.AddRange(new List<Habitacion>
-            {
-                new Habitacion(101, 75,  TipoHabitacion.Sencilla),
-                new Habitacion(102, 75, TipoHabitacion.Sencilla),
-                new Habitacion(201, 150, TipoHabitacion.Doble),
-                new Habitacion(202, 150, TipoHabitacion.Doble)
-            });
+                    data.habitaciones.AddRange(new List<Habitacion>
+                {
+                    new Habitacion(101, 75,  TipoHabitacion.Sencilla),
+                    new Habitacion(102, 75, TipoHabitacion.Sencilla),
+                    new Habitacion(201, 150, TipoHabitacion.Doble),
+                    new Habitacion(202, 150, TipoHabitacion.Doble)
+                });
+            }
             // Los clientes los registran los recepcionistas.
 
             bool running = true;
@@ -108,7 +113,7 @@
                 }
             }
             // Guardamos los datos al salir del programa. Se llama a SaveData pasando el objeto data y el path donde se guardará.
-            SaveManager.SaveData(data, fullPath);
+            SaveManager.SaveData(data, filePath);
             Console.WriteLine("Adiós!");
         }
     }
