@@ -7,7 +7,7 @@ namespace GanadoresRetoEmpresarial
 {
     public class MenuRecepcionista
     {
-        public static void Mostrar(Recepcionista recepcionistaActual, HotelData data)
+        public void Mostrar(Recepcionista recepcionistaActual, HotelData data)
         {
             bool sesionActiva = true;
 

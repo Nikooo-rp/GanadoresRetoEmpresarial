@@ -17,7 +17,7 @@ namespace GanadoresRetoEmpresarial
             get { return descuento; }
             set
             {
-                descuento = Math.Abs(Math.Clamp(value, 0, 100));
+                descuento = Math.Clamp(value, 0, 100);
             }
         }
 
@@ -25,7 +25,7 @@ namespace GanadoresRetoEmpresarial
         {
             this.nombre = nombre;
             this.descripcion = descripcion;
-            this.descuento = descuento;
+            this.Descuento = descuento;
             this.periodoValidez = (fechaInicio, fechaFin);
         }
     }

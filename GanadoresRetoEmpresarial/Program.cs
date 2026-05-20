@@ -21,6 +21,7 @@
             var data = new HotelData();
             MenuCliente menuCliente = new MenuCliente();
             MenuAdmin menuAdmin = new MenuAdmin();
+            MenuRecepcionista menuRecepcionista = new MenuRecepcionista();
 
             // Base de datos inicial de usuarios y habitaciones.
             // Check para evitar sobreescribir datos existentes. Solo se llenarán las listas si están vacías, lo que solo ocurrirá la primera vez que se ejecute el programa sin datos guardados.
@@ -96,8 +97,7 @@
                                 menuCliente.MostrarMenu(c, data);
                                 break;
                             case Recepcionista r:
-                                //MenuRecepcionista menuRecepcionista = new MenuRecepcionista(r, data);
-                                //menuRecepcionista.MostrarMenu();
+                                menuRecepcionista.Mostrar(r, data);
                                 break;
                             case Admin a:
                                 menuAdmin.Mostrar(a, data);

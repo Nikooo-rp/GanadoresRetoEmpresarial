@@ -13,9 +13,9 @@ namespace GanadoresRetoEmpresarial
             while (!salir)
             {
                 Console.Clear();
-                Console.WriteLine("Bienvenido al menú del admin");
-                Console.WriteLine("¿Qué quieres hacer");
-                Console.WriteLine("  [1] Modificar el costo de una habitacion." +
+                Console.WriteLine("Bienvenido, " + a.nombre);
+                Console.WriteLine("¿Qué quieres hacer?");
+                Console.WriteLine(" [1] Modificar el costo de una habitacion." +
                     "\n [2] Gestionar promociones y tarifas especiales." +
                     "\n [3] Calcular ingresos." +
                     "\n [4] Generar reportes." +
@@ -31,9 +31,7 @@ namespace GanadoresRetoEmpresarial
                             Console.WriteLine($"{i + 1}. Habitación #{data.habitaciones[i].numero}");
                         }
 
-                        Console.Write("Seleccione una habitación: ");
-
-                        int opc = int.TryParse(Console.ReadLine(), out int seleccion) ? seleccion : 1;
+                        int opc = AskTypes.AskInt("Selecciona una habitación:");
 
                         Habitacion habitacionSeleccionada = data.habitaciones[opc - 1];
 

@@ -90,16 +90,28 @@ namespace GanadoresRetoEmpresarial
             }
             string mesPicoNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesPico);
             string mesValleNombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mesValle);
+
             string reporte = "";
-            reporte += $"Mes con mayores ingresos: {mesPicoNombre} (${ingresosPico})\n";
-            reporte += $"Mes con menores ingresos: {mesValleNombre} (${ingresosValle})\n";
+
+            reporte += "-----------------------------REPORTE DE INGRESOS-----------------------------\n";
+            reporte += $"Reporte generado el {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\n";
+            reporte += "------------------------------------------------------------------------------------------\n";
             reporte += $"Ingresos totales dentro del periodo:{fechaInicio.ToShortDateString()} - {fechaFin.ToShortDateString()}\n";
             reporte += $"{ingresosTotales}\n";
-            Console.WriteLine("------------------------------------------------------------------------------------------");
+
+            // si son iguales, quiere decir que solo hay un mes. En ese caso, no tiene sentido mostrar un mes pico y valle, ya que serían el mismo mes, por lo que solo se muestra el mes pico (que es el mismo que el valle).
+            if (mesPico != mesValle)
+            {
+                reporte += "------------------------------------------------------------------------------------------\n";
+                reporte += $"Mes con mayores ingresos: {mesPicoNombre} (${ingresosPico})\n";
+                reporte += $"Mes con menores ingresos: {mesValleNombre} (${ingresosValle})\n";
+                reporte += "------------------------------------------------------------------------------------------\n";
+            }
+
+            Console.WriteLine(reporte);
             string respuesta = AskTypes.AskString("Deseas imprimir el reporte? (s/n)");
             if (respuesta.ToLower() == "s")
             {
-                reporte += $"Reporte generado el {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
                 ImprimirReporte(reporte, fechaInicio, fechaFin);
             }
         }
