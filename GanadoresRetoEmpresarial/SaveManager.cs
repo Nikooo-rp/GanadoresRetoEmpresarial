@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace GanadoresRetoEmpresarial
@@ -33,6 +34,7 @@ namespace GanadoresRetoEmpresarial
                 if (File.Exists(path))
                 {
                     string jsonData = File.ReadAllText(path);
+                    Console.WriteLine("Leidos datos");
                     return System.Text.Json.JsonSerializer.Deserialize<HotelData>(jsonData, options) ?? new HotelData();
                 }
                 else
@@ -43,6 +45,7 @@ namespace GanadoresRetoEmpresarial
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al cargar los datos: {ex.Message}");
+                Console.ReadLine();
                 return new HotelData();
             }
         }

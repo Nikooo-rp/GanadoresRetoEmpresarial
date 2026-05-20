@@ -10,9 +10,9 @@ namespace GanadoresRetoEmpresarial
         public string correoCliente;
         public List<Reserva> reservasCliente = new List<Reserva>();
 
-        public Cliente(string correo, string nombre, string contraseña) : base(nombre, contraseña)
+        public Cliente(string correoCliente, string nombre, string contraseña) : base(nombre, contraseña)
         {
-            this.correoCliente = correo;
+            this.correoCliente = correoCliente;
             this.nombre = nombre;
             this.contraseña = contraseña;
         }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GanadoresRetoEmpresarial")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5fb540bca4523f5e75621a289c919072944dd281")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d6b1e789ef3a950ce2f1dcc7ad27d15c2af33f1")]
 [assembly: System.Reflection.AssemblyProductAttribute("GanadoresRetoEmpresarial")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GanadoresRetoEmpresarial")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

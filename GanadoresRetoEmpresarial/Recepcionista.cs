@@ -83,6 +83,7 @@ namespace GanadoresRetoEmpresarial
             // Limpiamos los servicios en memoria porque ya se cobraron.
             data.serviciosAdicionales.Clear();
 
+            cliente.reservasCliente.Remove(reserva); // Eliminamos la reserva de la lista del cliente, ya que se completó.
             return nuevaFactura;
         }
                         

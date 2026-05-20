@@ -45,16 +45,16 @@ namespace GanadoresRetoEmpresarial
 
         private void AgregarLinea(string linea) => detalleLineas.Add(linea);
 
-        private void ImprimirFactura()
-        {
-            Console.WriteLine($"Factura #{numeroFactura} - Fecha: {fechaFacturacion}");
-            Console.WriteLine($"Cliente: {nombreCliente}");
-            Console.WriteLine("Detalle:");
-            foreach (var linea in detalleLineas)
-            {
-                Console.WriteLine(linea);
-            }
-            Console.WriteLine($"Costo Total: {costoTotal}");
-        }
+        //private void ImprimirFactura()
+        //{
+        //    Console.WriteLine($"Factura #{numeroFactura} - Fecha: {fechaFacturacion}");
+        //    Console.WriteLine($"Cliente: {nombreCliente}");
+        //    Console.WriteLine("Detalle:");
+        //    foreach (var linea in detalleLineas)
+        //    {
+        //        Console.WriteLine(linea);
+        //    }
+        //    Console.WriteLine($"Costo Total: {costoTotal}");
+        //}
     }
 }

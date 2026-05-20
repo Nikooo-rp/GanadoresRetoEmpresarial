@@ -11,14 +11,17 @@
         // La segunda linea combina el path del escritorio con el nombre de la carpeta donde se guardarán los datos, y luego crea esa carpeta.
         static void Main(string[] args)
         {
-            Directory.CreateDirectory(fullPath);
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("No se encontraron datos guardados, creando nueva carpeta y archivo...");
+                Directory.CreateDirectory(fullPath);
+            }
             //En caso de que ya exista la carpeta, CreateDirectory no hará nada y seguirá adelante, así que no hay riesgo de perder datos existentes.
 
             // Cargamos datos guardados, si es que existen. Si no, se crea un nuevo objeto HotelData vacío.
-            SaveManager.LoadData(filePath);
-
+            var data = SaveManager.LoadData(filePath);
+            
             // Instanciamos datos y menús.
-            var data = new HotelData();
             MenuCliente menuCliente = new MenuCliente();
             MenuAdmin menuAdmin = new MenuAdmin();
             MenuRecepcionista menuRecepcionista = new MenuRecepcionista();
