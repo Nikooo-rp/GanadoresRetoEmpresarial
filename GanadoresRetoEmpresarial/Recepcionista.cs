@@ -71,8 +71,11 @@ namespace GanadoresRetoEmpresarial
                 reserva.habitacion.GetEstado(EstadoHabitacion.Disponible);
             }
 
+            // Incrementamos el número de factura para asignar un nuevo número único a esta transacción.
+            data.numFactura++;
             // Calculamos los costos usando la clase Facturacion.
             Facturacion nuevaFactura = Facturacion.CalcularCostos(reserva.habitacion, reserva.GetNumeroNoches(), data.serviciosAdicionales, cliente.nombre);
+            nuevaFactura.numeroFactura = data.numFactura; // Asignamos el número de factura generado.
 
             // Guardamos la factura en el sistema central.
             data.facturas.Add(nuevaFactura);
@@ -88,8 +91,7 @@ namespace GanadoresRetoEmpresarial
         {
             if (factura == null) return;
 
-            // Generamos el número de factura basándonos en cuántas facturas existen.
-            int numeroFacturaAsignado = data.facturas.Count;
+            int numeroFacturaAsignado = factura.numeroFactura; // Este número ya se asigna al generar la factura.
 
             // Diseño de la UI de la factura en consola
             Console.WriteLine("\n=======================================================");
