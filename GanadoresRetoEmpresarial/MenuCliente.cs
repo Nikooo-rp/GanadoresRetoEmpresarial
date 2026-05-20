@@ -6,17 +6,44 @@ namespace GanadoresRetoEmpresarial
 {
     public class MenuCliente
     {
-        private List<Reserva>? reservasCliente;
-        HotelData? data = null;
-        Cliente? cliente = null;
+        private HotelData data;
+        private Cliente cliente;
 
         public void MostrarMenu(Cliente cliente, HotelData data)
         {
-            this.data = data;
             this.cliente = cliente;
-            this.reservasCliente = cliente.reservasCliente;
+            this.data = data;
 
-            Console.Clear();
+            int opcion;
+            do
+            {
+                Console.Clear();
+                MostrarEncabezado();
+
+                opcion = AskTypes.AskInt("\nSeleccione una opción: ");
+
+                switch (opcion)
+                {
+                    case 1: EjecutarConMensaje(CrearReserva); break;
+                    case 2: EjecutarConMensaje(ConsultarDisponibilidad); break;
+                    case 3: EjecutarConMensaje(VerTodasReservas); break;
+                    case 4: EjecutarConMensaje(CancelarReserva); break;
+                    case 5: EjecutarConMensaje(VerDetalleReserva); break;
+                    case 6: EjecutarConMensaje(ModificarFechasReserva); break;
+                    case 7: EjecutarConMensaje(ConsultarPrecioHabitacion); break;
+                    case 0: Console.WriteLine("\n¡Gracias por usar nuestro servicio!"); break;
+                    default: Console.WriteLine("Opción no válida"); break;
+                }
+
+                if (opcion != 0) Pausar();
+
+            } while (opcion != 0);
+        }
+
+        // ==================== MÉTODOS DE UI (responsabilidad principal) ====================
+
+        private void MostrarEncabezado()
+        {
             Console.WriteLine("=== MENÚ DEL CLIENTE ===");
             Console.WriteLine($"Bienvenido: {cliente.nombre}");
             Console.WriteLine($"Correo: {cliente.correoCliente}");
@@ -29,432 +56,259 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("6. Modificar fechas de una reserva");
             Console.WriteLine("7. Consultar precio de una habitación");
             Console.WriteLine("0. Salir");
-            int opcion = AskTypes.AskInt("\nSeleccione una opción: ");
-            
-                switch (opcion)
-                {
-                    case 1:
-                        CrearReserva();
-                        break;
-                    case 2:
-                        ConsultarDisponibilidad();
-                        break;
-                    case 3:
-                        VerTodasReservas();
-                        break;
-                    case 4:
-                        CancelarReserva();
-                        break;
-                    case 5:
-                        VerDetalleReserva();
-                        break;
-                    case 6:
-                        ModificarFechasReserva();
-                        break;
-                    case 7:
-                        ConsultarPrecioHabitacion();
-                        break;
-                    case 0:
-                        Console.WriteLine("\n¡Gracias por usar nuestro servicio!");
-                        break;
-                    default:
-                        Console.WriteLine("Opción no válida");
-                        break;
-                }
-
-                if (opcion != 0)
-                {
-                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                    Console.ReadKey();
-                }
-                
-            
         }
+
+        private void Pausar()
+        {
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
+
+        private void EjecutarConMensaje(Action accion)
+        {
+            Console.Clear();
+            accion();
+        }
+
+        // ==================== MÉTODOS QUE SOLO PIDEN DATOS Y MUESTRAN RESULTADOS ====================
 
         private void CrearReserva()
         {
-            Console.Clear();
             Console.WriteLine("=== CREAR NUEVA RESERVA ===\n");
 
-            // Mostrar habitaciones disponibles
-            Console.WriteLine("Habitaciones disponibles:");
-            Console.WriteLine("N°  | Número | Tipo           | Precio/noche | Estado");
-            Console.WriteLine("--------------------------------------------------------");
+            var fechas = SolicitarFechas();
+            if (!fechas.HasValue) return;
 
-            List<Habitacion> habitacionesDisponiblesActual = data.habitaciones
-                .Where(h => h.EstaDisponible())
-                .ToList();
+            var habitaciones = cliente.ObtenerHabitacionesDisponiblesParaFechas(data, fechas.Value.entrada, fechas.Value.salida);
 
-            if (habitacionesDisponiblesActual.Count == 0)
+            if (habitaciones.Count == 0)
             {
-                Console.WriteLine("No hay habitaciones disponibles en este momento.");
+                Console.WriteLine("No hay habitaciones disponibles para esas fechas.");
                 return;
             }
 
-            for (int i = 0; i < habitacionesDisponiblesActual.Count; i++)
+            MostrarListaHabitaciones(habitaciones);
+
+            var habitacion = SeleccionarHabitacion(habitaciones);
+            if (habitacion == null) return;
+
+            var reserva = cliente.CrearReserva(fechas.Value.entrada, fechas.Value.salida, habitacion);
+
+            if (reserva != null)
             {
-                Console.WriteLine($"{i + 1,-3} | {habitacionesDisponiblesActual[i].numero,-6} | {habitacionesDisponiblesActual[i].tipo,-14} | ${habitacionesDisponiblesActual[i].precioNoche,-11} | {habitacionesDisponiblesActual[i].estadoH}");
-            }
-
-            // Seleccionar habitación
-            Console.Write("\nSeleccione el número de la habitación que desea reservar: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= habitacionesDisponiblesActual.Count)
-            {
-                Habitacion habitacionSeleccionada = habitacionesDisponiblesActual[seleccion - 1];
-
-                // Fecha de entrada
-                Console.Write("Ingrese la fecha de entrada (dd/mm/yyyy): ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaEntrada))
-                {
-                    // Fecha de salida
-                    Console.Write("Ingrese la fecha de salida (dd/mm/yyyy): ");
-                    if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaSalida))
-                    {
-                        if (Admin.isValidPeriod(fechaEntrada, fechaSalida))
-                        {
-                            // Verificar disponibilidad de fechas
-                            if (VerificarDisponibilidadFechas(habitacionSeleccionada, fechaEntrada, fechaSalida))
-                            {
-                                // Crear la reserva usando el constructor con fechas
-                                Reserva nuevaReserva = cliente.CrearReserva(fechaEntrada, fechaSalida, habitacionSeleccionada);
-                                nuevaReserva.ModificarEstado("Confirmada");
-
-                                // Guardar referencia a la habitación (necesario para el menú)
-                                // Podrías agregar un campo habitacion en tu clase Reserva o usar un diccionario
-                                // Por ahora, asumimos que agregaste ese campo
-                                nuevaReserva.habitacion = habitacionSeleccionada;
-
-                                reservasCliente.Add(nuevaReserva);
-
-                                // Cambiar el estado de la habitación a Ocupada
-                                habitacionSeleccionada.GetEstado(EstadoHabitacion.Ocupada);
-
-                                Console.WriteLine("\n¡Reserva creada exitosamente!");
-                                nuevaReserva.MostrarInformacion();
-                            }
-                            else
-                            {
-                                Console.WriteLine("Lo siento, la habitación no está disponible para esas fechas.");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("La fecha de salida debe ser posterior a la fecha de entrada.");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Fecha de salida inválida.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Fecha inválida.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Selección inválida.");
-            }
-        }
-
-        private void ConsultarDisponibilidad()
-        {
-            Console.Clear();
-            Console.WriteLine("=== DISPONIBILIDAD DE HABITACIONES ===\n");
-
-            Console.WriteLine("Número | Tipo           | Precio/noche | Estado");
-            Console.WriteLine("------------------------------------------------");
-
-            foreach (Habitacion habitacion in data.habitaciones)
-            {
-                string disponibilidad = habitacion.EstaDisponible() ? "Disponible" : habitacion.estadoH.ToString();
-                Console.WriteLine($"{habitacion.numero,-6} | {habitacion.tipo,-14} | ${habitacion.precioNoche,-11} | {disponibilidad}");
-            }
-
-            Console.WriteLine("\n¿Desea consultar disponibilidad para fechas específicas? (s/n): ");
-            string respuesta = Console.ReadLine();
-
-            if (respuesta.ToLower() == "s")
-            {
-                Console.Write("\nIngrese fecha de entrada (dd/mm/yyyy): ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaEntrada))
-                {
-                    Console.Write("Ingrese fecha de salida (dd/mm/yyyy): ");
-                    if (DateTime.TryParse(Console.ReadLine(), out DateTime fechaSalida))
-                    {
-                        Console.WriteLine("\n=== DISPONIBILIDAD PARA FECHAS ESPECÍFICAS ===\n");
-                        Console.WriteLine("Número | Tipo           | Precio/noche | Disponible para esas fechas");
-                        Console.WriteLine("--------------------------------------------------------------");
-
-                        foreach (Habitacion habitacion in data.habitaciones)
-                        {
-                            bool disponible = VerificarDisponibilidadFechas(habitacion, fechaEntrada, fechaSalida);
-                            string estado = disponible && habitacion.EstaDisponible() ? "Sí" : "No";
-                            Console.WriteLine($"{habitacion.numero,-6} | {habitacion.tipo,-14} | ${habitacion.precioNoche,-11} | {estado}");
-                        }
-                    }
-                }
-            }
-        }
-
-        private void VerTodasReservas()
-        {
-            Console.Clear();
-            Console.WriteLine("=== MIS RESERVAS ===\n");
-
-            if (reservasCliente.Count == 0)
-            {
-                Console.WriteLine("No tiene reservas registradas.");
-                return;
-            }
-
-            for (int i = 0; i < reservasCliente.Count; i++)
-            {
-                Console.WriteLine($"--- Reserva {i + 1} ---");
-                reservasCliente[i].MostrarInformacion();
-                if (reservasCliente[i].habitacion != null)
-                {
-                    Console.WriteLine($"Tipo de habitación: {reservasCliente[i].habitacion.tipo}");
-                }
-                Console.WriteLine();
+                Console.WriteLine("\n✓ ¡Reserva creada exitosamente!");
+                Console.WriteLine(cliente.ObtenerDetalleReserva(reserva));
             }
         }
 
         private void CancelarReserva()
         {
-            Console.Clear();
             Console.WriteLine("=== CANCELAR RESERVA ===\n");
 
-            if (reservasCliente.Count == 0)
+            var activas = cliente.ObtenerReservasActivas();
+            if (activas.Count == 0)
             {
-                Console.WriteLine("No tiene reservas para cancelar.");
+                Console.WriteLine("No tienes reservas activas.");
                 return;
             }
 
-            // Mostrar reservas activas (no canceladas)
-            Console.WriteLine("Seleccione la reserva a cancelar:");
-            int indiceVisible = 1;
-            List<int> indicesActivos = new List<int>();
+            MostrarReservasResumidas(activas);
 
-            for (int i = 0; i < reservasCliente.Count; i++)
-            {
-                if (reservasCliente[i].GetEstadoR() != "Cancelada")
-                {
-                    Console.WriteLine($"{indiceVisible}. Habitación {reservasCliente[i].habitacion.numero} ({reservasCliente[i].habitacion.tipo}) - " +
-                                    $"Entrada: {reservasCliente[i].GetFechaEntrada().ToShortDateString()} - " +
-                                    $"Salida: {reservasCliente[i].GetFechaSalida().ToShortDateString()} - " +
-                                    $"Estado: {reservasCliente[i].GetEstadoR()}");
-                    indicesActivos.Add(i);
-                    indiceVisible++;
-                }
-            }
+            var reserva = SeleccionarReserva(activas);
+            if (reserva == null) return;
 
-            if (indicesActivos.Count == 0)
+            Console.WriteLine("\n--- Detalle de la reserva ---");
+            Console.WriteLine(cliente.ObtenerDetalleReserva(reserva));
+
+            if (Confirmar("¿Cancelar esta reserva?"))
+                cliente.CancelarReserva(reserva);
+        }
+
+        private void ModificarFechasReserva()
+        {
+            Console.WriteLine("=== MODIFICAR FECHAS ===\n");
+
+            var activas = cliente.ObtenerReservasActivas();
+            if (activas.Count == 0)
             {
-                Console.WriteLine("No hay reservas activas para cancelar.");
+                Console.WriteLine("No hay reservas activas.");
                 return;
             }
 
-            Console.Write("\nSeleccione una opción: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= indicesActivos.Count)
+            MostrarReservasResumidas(activas);
+
+            var reserva = SeleccionarReserva(activas);
+            if (reserva == null) return;
+
+            Console.WriteLine("\nReserva actual:");
+            Console.WriteLine(cliente.ObtenerDetalleReserva(reserva));
+
+            var nuevasFechas = SolicitarFechas();
+            if (!nuevasFechas.HasValue) return;
+
+            if (cliente.ModificarFechasReserva(reserva, nuevasFechas.Value.entrada, nuevasFechas.Value.salida))
             {
-                Reserva reservaACancelar = reservasCliente[indicesActivos[seleccion - 1]];
-
-                Console.WriteLine($"\nDetalle de la reserva a cancelar:");
-                reservaACancelar.MostrarInformacion();
-
-                Console.Write($"\n¿Está seguro de cancelar esta reserva? (s/n): ");
-                string confirmacion = Console.ReadLine();
-
-                if (confirmacion.ToLower() == "s")
-                {
-                    // Cambiar el estado de la habitación de vuelta a Disponible
-                    reservaACancelar.habitacion?.GetEstado(EstadoHabitacion.Disponible);
-                    cliente.CancelarReserva(reservaACancelar);
-                }
-                else
-                {
-                    Console.WriteLine("Cancelación abortada.");
-                }
+                Console.WriteLine($"\n✓ Nuevo costo: ${reserva.GetCostoTotal()}");
+                Console.WriteLine($"  Nuevas noches: {reserva.GetNumeroNoches()}");
             }
-            else
+        }
+
+        private void VerTodasReservas()
+        {
+            Console.WriteLine("=== MIS RESERVAS ===\n");
+
+            var reservas = cliente.reservasCliente;
+            if (reservas.Count == 0)
             {
-                Console.WriteLine("Selección inválida.");
+                Console.WriteLine("No tiene reservas.");
+                return;
+            }
+
+            for (int i = 0; i < reservas.Count; i++)
+            {
+                Console.WriteLine($"--- Reserva {i + 1} ---");
+                Console.WriteLine(cliente.ObtenerDetalleReserva(reservas[i]));
+                Console.WriteLine();
             }
         }
 
         private void VerDetalleReserva()
         {
-            Console.Clear();
             Console.WriteLine("=== DETALLE DE RESERVA ===\n");
 
-            if (reservasCliente.Count == 0)
+            var reservas = cliente.reservasCliente;
+            if (reservas.Count == 0)
             {
-                Console.WriteLine("No tiene reservas registradas.");
+                Console.WriteLine("No tiene reservas.");
                 return;
             }
 
-            Console.WriteLine("Seleccione la reserva que desea ver:");
-            for (int i = 0; i < reservasCliente.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. Habitación {reservasCliente[i].habitacion.numero} ({reservasCliente[i].habitacion.tipo}) - " +
-                                $"Entrada: {reservasCliente[i].GetFechaEntrada().ToShortDateString()} - " +
-                                $"Estado: {reservasCliente[i].GetEstadoR()}");
-            }
+            MostrarReservasResumidas(reservas);
 
-            Console.Write("\nOpción: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= reservasCliente.Count)
-            {
-                Console.Clear();
-                Console.WriteLine("=== DETALLE COMPLETO DE LA RESERVA ===\n");
-                reservasCliente[seleccion - 1].MostrarInformacion();
-                if (reservasCliente[seleccion - 1].habitacion != null)
-                {
-                    Console.WriteLine($"Tipo de habitación: {reservasCliente[seleccion - 1].habitacion.tipo}");
-                    Console.WriteLine($"Número de habitación: {reservasCliente[seleccion - 1].habitacion.numero}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Selección inválida.");
-            }
+            var reserva = SeleccionarReserva(reservas);
+            if (reserva == null) return;
+
+            Console.Clear();
+            Console.WriteLine("=== DETALLE COMPLETO ===\n");
+            Console.WriteLine(cliente.ObtenerDetalleReserva(reserva));
         }
 
-        private void ModificarFechasReserva()
+        private void ConsultarDisponibilidad()
         {
-            Console.Clear();
-            Console.WriteLine("=== MODIFICAR FECHAS DE RESERVA ===\n");
+            Console.WriteLine("=== DISPONIBILIDAD ===\n");
 
-            if (reservasCliente.Count == 0)
+            MostrarTablaHabitaciones(data.habitaciones);
+
+            if (Confirmar("¿Consultar disponibilidad para fechas específicas?"))
             {
-                Console.WriteLine("No tiene reservas para modificar.");
-                return;
-            }
-
-            // Mostrar reservas no canceladas
-            Console.WriteLine("Seleccione la reserva a modificar:");
-            int indiceVisible = 1;
-            List<int> indicesActivos = new List<int>();
-
-            for (int i = 0; i < reservasCliente.Count; i++)
-            {
-                if (reservasCliente[i].GetEstadoR() != "Cancelada")
+                var fechas = SolicitarFechas();
+                if (fechas.HasValue)
                 {
-                    Console.WriteLine($"{indiceVisible}. Habitación {reservasCliente[i].habitacion.numero} - " +
-                                    $"Entrada: {reservasCliente[i].GetFechaEntrada().ToShortDateString()} - " +
-                                    $"Salida: {reservasCliente[i].GetFechaSalida().ToShortDateString()}");
-                    indicesActivos.Add(i);
-                    indiceVisible++;
-                }
-            }
-
-            if (indicesActivos.Count == 0)
-            {
-                Console.WriteLine("No hay reservas activas para modificar.");
-                return;
-            }
-
-            Console.Write("\nOpción: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= indicesActivos.Count)
-            {
-                Reserva reservaAModificar = reservasCliente[indicesActivos[seleccion - 1]];
-
-                Console.WriteLine($"\nReserva actual:");
-                reservaAModificar.MostrarInformacion();
-
-                Console.Write("\nIngrese nueva fecha de entrada (dd/mm/yyyy): ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime nuevaFechaEntrada))
-                {
-                    Console.Write("Ingrese nueva fecha de salida (dd/mm/yyyy): ");
-                    if (DateTime.TryParse(Console.ReadLine(), out DateTime nuevaFechaSalida))
-                    {
-                        try
-                        {
-                            // Verificar disponibilidad de las nuevas fechas
-                            if (VerificarDisponibilidadFechas(reservaAModificar.habitacion, nuevaFechaEntrada, nuevaFechaSalida, reservaAModificar))
-                            {
-                                reservaAModificar.ActualizarFechas(nuevaFechaEntrada, nuevaFechaSalida, reservaAModificar.habitacion.precioNoche);
-                                Console.WriteLine("\n¡Fechas actualizadas exitosamente!");
-                                Console.WriteLine($"Nuevo costo total: ${reservaAModificar.GetCostoTotal()}");
-                                Console.WriteLine($"Nuevo número de noches: {reservaAModificar.GetNumeroNoches()}");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Las nuevas fechas no están disponibles para esta habitación.");
-                            }
-                        }
-                        catch (ArgumentException ex)
-                        {
-                            Console.WriteLine($"Error: {ex.Message}");
-                        }
-                    }
+                    Console.WriteLine("\n=== HABITACIONES DISPONIBLES ===\n");
+                    var disponibles = cliente.ObtenerHabitacionesDisponiblesParaFechas(data, fechas.Value.entrada, fechas.Value.salida);
+                    MostrarTablaHabitaciones(disponibles);
                 }
             }
         }
 
         private void ConsultarPrecioHabitacion()
         {
-            Console.Clear();
-            Console.WriteLine("=== CONSULTAR PRECIO DE HABITACIÓN ===\n");
+            Console.WriteLine("=== CONSULTAR PRECIO ===\n");
 
-            Console.WriteLine("Habitaciones disponibles:");
-            Console.WriteLine("N°  | Número | Tipo           | Precio/noche");
-            Console.WriteLine("---------------------------------------------");
+            MostrarTablaPrecios(data.habitaciones);
 
-            for (int i = 0; i < data.habitaciones.Count; i++)
-            {
-                Console.WriteLine($"{i + 1,-3} | {data.habitaciones[i].numero,-6} | {data.habitaciones[i].tipo,-14} | ${data.habitaciones[i].precioNoche}");
-            }
+            var habitacion = SeleccionarHabitacion(data.habitaciones);
+            if (habitacion == null) return;
 
-            Console.Write("\nSeleccione una habitación: ");
-            if (int.TryParse(Console.ReadLine(), out int seleccion) && seleccion > 0 && seleccion <= data.habitaciones.Count)
+            Console.Write("Número de noches: ");
+            if (int.TryParse(Console.ReadLine(), out int noches) && noches > 0)
             {
-                Habitacion habitacion = data.habitaciones[seleccion - 1];
-                Console.Write("Ingrese el número de noches: ");
-                if (int.TryParse(Console.ReadLine(), out int noches) && noches > 0)
-                {
-                    double costoTotal = habitacion.ConsultarPrecio(noches);
-                    Console.WriteLine($"\nCosto total para {noches} noches: ${costoTotal}");
-                }
-                else
-                {
-                    Console.WriteLine("Número de noches inválido.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Selección inválida.");
+                Console.WriteLine($"\nPrecio por noche: ${habitacion.precioNoche}");
+                Console.WriteLine($"Total para {noches} noches: ${cliente.ConsultarPrecioHabitacion(habitacion, noches)}");
             }
         }
 
-        private bool VerificarDisponibilidadFechas(Habitacion habitacion, DateTime fechaEntrada, DateTime fechaSalida, Reserva reservaExcluir = null)
+        // ==================== MÉTODOS AUXILIARES SIMPLES ====================
+
+        private (DateTime entrada, DateTime salida)? SolicitarFechas()
         {
-            foreach (Reserva reserva in reservasCliente)
+            Console.Write("Fecha de entrada (dd/mm/yyyy): ");
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime entrada))
             {
-                // Si es la misma reserva que estamos modificando, la excluimos
-                if (reservaExcluir != null && reserva == reservaExcluir)
-                    continue;
-
-                // Verificar si la reserva es de la misma habitación y no está cancelada
-                if (reserva.habitacion != null &&
-                    reserva.habitacion.numero == habitacion.numero &&
-                    reserva.GetEstadoR() != "Cancelada")
-                {
-                    DateTime reservaEntrada = reserva.GetFechaEntrada();
-                    DateTime reservaSalida = reserva.GetFechaSalida();
-
-                    // Verificar si hay solapamiento de fechas
-                    bool haySolapamiento = !(fechaSalida <= reservaEntrada || fechaEntrada >= reservaSalida);
-
-                    if (haySolapamiento)
-                    {
-                        return false; // Hay conflicto de fechas
-                    }
-                }
+                Console.WriteLine("Fecha inválida.");
+                return null;
             }
 
-            return true;
+            Console.Write("Fecha de salida (dd/mm/yyyy): ");
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime salida))
+            {
+                Console.WriteLine("Fecha inválida.");
+                return null;
+            }
+
+            return (entrada, salida);
+        }
+
+        private Habitacion? SeleccionarHabitacion(List<Habitacion> habitaciones)
+        {
+            Console.Write("\nSeleccione una habitación: ");
+            if (int.TryParse(Console.ReadLine(), out int idx) && idx >= 1 && idx <= habitaciones.Count)
+                return habitaciones[idx - 1];
+
+            Console.WriteLine("Selección inválida.");
+            return null;
+        }
+
+        private Reserva? SeleccionarReserva(List<Reserva> reservas)
+        {
+            Console.Write("\nOpción: ");
+            if (int.TryParse(Console.ReadLine(), out int idx) && idx >= 1 && idx <= reservas.Count)
+                return reservas[idx - 1];
+
+            Console.WriteLine("Opción inválida.");
+            return null;
+        }
+
+        private bool Confirmar(string mensaje)
+        {
+            Console.Write($"\n{mensaje} (s/n): ");
+            return Console.ReadLine()?.ToLower() == "s";
+        }
+
+        // ==================== MÉTODOS DE VISUALIZACIÓN ====================
+
+        private void MostrarListaHabitaciones(List<Habitacion> habitaciones)
+        {
+            Console.WriteLine("\nN°  | Número | Tipo           | Precio/noche");
+            Console.WriteLine("---------------------------------------------");
+            for (int i = 0; i < habitaciones.Count; i++)
+                Console.WriteLine($"{i + 1,-3} | {habitaciones[i].numero,-6} | {habitaciones[i].tipo,-14} | ${habitaciones[i].precioNoche}");
+        }
+
+        private void MostrarTablaHabitaciones(List<Habitacion> habitaciones)
+        {
+            Console.WriteLine("Número | Tipo           | Precio/noche | Estado");
+            Console.WriteLine("------------------------------------------------");
+            foreach (var h in habitaciones)
+                Console.WriteLine($"{h.numero,-6} | {h.tipo,-14} | ${h.precioNoche,-11} | {(h.EstaDisponible() ? "Disponible" : h.estadoH)}");
+        }
+
+        private void MostrarTablaPrecios(List<Habitacion> habitaciones)
+        {
+            Console.WriteLine("N°  | Número | Tipo           | Precio/noche");
+            Console.WriteLine("---------------------------------------------");
+            for (int i = 0; i < habitaciones.Count; i++)
+                Console.WriteLine($"{i + 1,-3} | {habitaciones[i].numero,-6} | {habitaciones[i].tipo,-14} | ${habitaciones[i].precioNoche}");
+        }
+
+        private void MostrarReservasResumidas(List<Reserva> reservas)
+        {
+            for (int i = 0; i < reservas.Count; i++)
+            {
+                var r = reservas[i];
+                Console.WriteLine($"{i + 1}. Habitación {r.habitacion.numero} ({r.habitacion.tipo})");
+                Console.WriteLine($"   {r.GetFechaEntrada():dd/MM/yyyy} → {r.GetFechaSalida():dd/MM/yyyy} | ${r.GetCostoTotal()}\n");
+            }
         }
     }
 }
