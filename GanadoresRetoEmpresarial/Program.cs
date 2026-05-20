@@ -54,7 +54,7 @@
             {
                 Console.Clear();
                 Console.WriteLine("=== Sistema de administración de Velisse Hotel ===");
-                string nombreUsuario = AskTypes.AskString("Ingresa tu nombre de usuario o 0 para salir:");
+                string nombreUsuario = AskTypes.AskString("Ingresa tu nombre de usuario o 0 para salir: ");
 
 
                 // Si el usuario ingresa "0", se cierra el programa. running se vuelve false y se continúa al siguiente ciclo, que termina inmediatamente.
@@ -88,7 +88,7 @@
                 // Si el usuario se encontró, se pide su contraseña. Si es válida, se muestra el menú correspondiente pasando el usuario actual y los datos.
                 else
                 {
-                    string contraseña = AskTypes.AskString("Ingresa tu contraseña:");
+                    string contraseña = AskTypes.AskString("Ingresa tu contraseña: ");
                     if (usuario.contraseña == contraseña)
                     {
                         switch (usuario)

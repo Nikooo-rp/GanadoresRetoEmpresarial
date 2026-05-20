@@ -15,30 +15,34 @@ namespace GanadoresRetoEmpresarial
                 Console.Clear();
                 Console.WriteLine("Bienvenido, " + a.nombre);
                 Console.WriteLine("¿Qué quieres hacer?");
-                Console.WriteLine(" [1] Modificar el costo de una habitacion." +
-                    "\n [2] Gestionar promociones y tarifas especiales." +
-                    "\n [3] Calcular ingresos." +
-                    "\n [4] Generar reportes." +
-                    "\n [5] Salir del menú.");
+                Console.WriteLine("[1] Modificar el costo de una habitacion." +
+                    "\n[2] Gestionar promociones y tarifas especiales." +
+                    "\n[3] Calcular ingresos." +
+                    "\n[4] Generar reportes." +
+                    "\n[5] Salir del menú.");
 
                 int opcion = int.TryParse(Console.ReadLine(), out int op) ? op : 5;
 
                 switch (opcion)
                 {
                     case 1:
+                        Console.Clear();
+                        Console.WriteLine("====Habitaciones a modificar====");
                         for (int i = 0; i < data.habitaciones.Count; i++)
                         {
-                            Console.WriteLine($"{i + 1}. Habitación #{data.habitaciones[i].numero}");
+                            Console.WriteLine($"{i + 1}.Habitación #{data.habitaciones[i].numero}");
                         }
 
-                        int opc = AskTypes.AskInt("Selecciona una habitación:");
+                        int opc = AskTypes.AskInt("Selecciona una habitación: ");
 
                         Habitacion habitacionSeleccionada = data.habitaciones[opc - 1];
 
-                        Console.WriteLine("Nuevo precio:");
+                        Console.Write("Nuevo precio: ");
                         double nuevoPrecio;
-                        if (double.TryParse(Console.ReadLine(), out double precio) && precio >= habitacionSeleccionada.precioNoche)
+                        if (double.TryParse(Console.ReadLine(), out double precio))
                         {
+                            Console.WriteLine($"El nuevo precio de la habitación {habitacionSeleccionada.numero} es {precio}.");
+                            Console.ReadKey();
                             nuevoPrecio = precio;
                         }
                         else

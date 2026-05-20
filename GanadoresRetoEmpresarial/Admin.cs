@@ -180,7 +180,7 @@ namespace GanadoresRetoEmpresarial
                     }
                 }
                 Console.WriteLine("------------------------------------------------------------------------------------------");
-                int opcion = AskTypes.AskInt(" 1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 0. Salir");
+                int opcion = AskTypes.AskInt("¿Que quieres hacer?\n 1. Agregar nueva promoción \n 2. Modificar promoción existente \n 3. Eliminar promoción \n 0. Salir \n");
                 switch (opcion)
                 {
                     case 1:
