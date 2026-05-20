@@ -81,21 +81,38 @@
                 // Si se encontró un usuario, se habrá asignado, sino, seguirá siendo null y se repetirá el ciclo.
                 if (usuario == null)
                 {
-                    Console.WriteLine("Usuario no encontrado, presiona cualquier tecla...");
-                    Console.ReadKey();
-                    continue;
+                    string rta = AskTypes.AskString("Usuario no encontrado, le gustaría registrarse como cliente nuevo? (s/n)");
+                    if (rta.ToLower() == "s")
+                    {
+                        string correo = AskTypes.AskString("Ingresa tu correo electrónico: ");
+                        if (data.clientes.Exists(c => c.correoCliente == correo))
+                        {
+                            Console.WriteLine("Ya existe un cliente registrado con ese correo, presiona cualquier tecla...");
+                            Console.ReadKey();
+                            continue;
+                        }
+                        else
+                        {
+                            Cliente nuevoCliente = new Cliente(correo, nombreUsuario, "password_generico");
+                            data.clientes.Add(nuevoCliente);
+                            Console.WriteLine("Cliente registrado exitosamente, presiona cualquier tecla para iniciar sesión...");
+                            Console.ReadKey();
+                            usuario = nuevoCliente;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
                 // Si el usuario se encontró, se pide su contraseña. Si es válida, se muestra el menú correspondiente pasando el usuario actual y los datos.
-                else
+                if (usuario is not Cliente)
                 {
                     string contraseña = AskTypes.AskString("Ingresa tu contraseña: ");
                     if (usuario.contraseña == contraseña)
                     {
                         switch (usuario)
                         {
-                            case Cliente c:
-                                menuCliente.MostrarMenu(c, data);
-                                break;
                             case Recepcionista r:
                                 menuRecepcionista.Mostrar(r, data);
                                 break;
@@ -107,6 +124,22 @@
                     else
                     {
                         Console.WriteLine("Contraseña incorrecta, presiona cualquier tecla...");
+                        Console.ReadKey();
+                        continue;
+                    }
+                }
+                // Clientes no tienen contraseña, solo se les pide su correo para verificar su identidad, ya que es un dato único que se asigna al crear su cuenta.
+                else
+                {
+                    Cliente c = (Cliente)usuario;
+                    string correo = AskTypes.AskString("Ingresa tu correo electrónico: ");
+                    if (c.correoCliente == correo)
+                    {
+                        menuCliente.MostrarMenu(c, data);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Correo electrónico incorrecto, presiona cualquier tecla...");
                         Console.ReadKey();
                         continue;
                     }
