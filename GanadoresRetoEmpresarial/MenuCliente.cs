@@ -29,8 +29,8 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("6. Modificar fechas de una reserva");
             Console.WriteLine("7. Consultar precio de una habitación");
             Console.WriteLine("0. Salir");
-            Console.Write("\nSeleccione una opción: ");
-            int opcion=Convert.ToInt32(Console.ReadLine());
+            int opcion = AskTypes.AskInt("\nSeleccione una opción: ");
+            
                 switch (opcion)
                 {
                     case 1:
