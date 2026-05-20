@@ -38,7 +38,7 @@ namespace GanadoresRetoEmpresarial
             Console.WriteLine("Reserva cancelada exitosamente.");
         }
 
-        internal Reserva CrearReserva(DateTime fechaEntrada, DateTime fechaSalida, Habitacion habitacionSeleccionada)
+        public Reserva CrearReserva(DateTime fechaEntrada, DateTime fechaSalida, Habitacion habitacionSeleccionada)
         {
             return new Reserva(fechaEntrada, fechaSalida, habitacionSeleccionada.precioNoche);
         }
