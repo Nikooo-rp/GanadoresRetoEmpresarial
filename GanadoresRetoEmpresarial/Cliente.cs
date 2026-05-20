@@ -40,7 +40,7 @@ namespace GanadoresRetoEmpresarial
 
         internal Reserva CrearReserva(DateTime fechaEntrada, DateTime fechaSalida, Habitacion habitacionSeleccionada)
         {
-            throw new NotImplementedException();
+            return new Reserva(fechaEntrada, fechaSalida, habitacionSeleccionada.precioNoche);
         }
     }
 }
