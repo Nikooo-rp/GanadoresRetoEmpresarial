@@ -5,8 +5,7 @@ using System.Text;
 public enum TipoHabitacion
 {
     Sencilla,
-    Doble,
-    Matrimonial
+    Doble
 }
 
 public enum EstadoHabitacion
