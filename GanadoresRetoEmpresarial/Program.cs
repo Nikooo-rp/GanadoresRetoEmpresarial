@@ -112,7 +112,7 @@
                     }
                 }
             }
-            // Guardamos los datos al salir del programa. Se llama a SaveData pasando el objeto data y el path donde se guardará.
+            // Guardamos los datos al salir del programa. Se llama a SaveData pasando el objeto data y el path del archivo donde se guardará.
             SaveManager.SaveData(data, filePath);
             Console.WriteLine("Adiós!");
         }
